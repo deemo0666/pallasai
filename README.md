@@ -108,10 +108,8 @@ Pallas Agent 是基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepsee
 <details>
 <summary><b>技术细节：iPhone 里的 Linux 是怎么跑起来的</b></summary>
 
-- **不靠 JIT**：iOS 不允许普通 App 生成可执行代码，所以虚拟机用的是 QEMU 的解释执行后端（TCG + TCTI），把 arm64 指令逐条解释执行。这也是它能通过 TestFlight 分发的原因。
-- **在 App 进程里**：虚拟机跑在 Pallas Agent 自己的进程里，2 个 vCPU，工作区通过 9p 挂进去，系统盘和工作区分开存放，更新 App 不丢数据。
-- **启动从 28 秒到 1.6 秒**：精简 initramfs、把引擎服务打包成单个文件、预编译 Python 字节码、预热 Node 编译缓存，冷启动从约 28 秒降到约 11 秒；再把启动好的机器存成快照，之后每次从快照恢复，约 1.6 秒就能执行命令。
-- **沙箱**：命令在 bubblewrap 里执行并去掉大部分 root 能力，系统盘只读挂载，引擎的启动密钥不会出现在命令行或文件系统里。
+- **不靠 JIT**：虚拟机用 QEMU 的解释执行后端，跑在 App 自己的进程里，所以能通过 TestFlight 分发。
+- **快照恢复**：第一次启动后把机器存成快照，之后约 1.6 秒就能执行命令。
 
 </details>
 

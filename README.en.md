@@ -108,10 +108,8 @@ The phone can switch to a computer running DeepSeek Harness at any time, or hand
 <details>
 <summary><b>Under the hood: how Linux runs inside an iPhone app</b></summary>
 
-- **No JIT**: iOS does not let ordinary apps generate executable code, so the VM uses QEMU's interpreting backend (TCG + TCTI) to execute arm64 instructions one by one. That is also why it can ship through TestFlight.
-- **Inside the app process**: the VM runs in Pallas Agent's own process with 2 vCPUs; the workspace is mounted over 9p, and the system disk is kept apart from the workspace so app updates keep your data.
-- **From 28 seconds to 1.6**: a trimmed initramfs, the engine service bundled into a single file, precompiled Python bytecode and a primed Node compile cache brought cold start from about 28 s to about 11 s; the booted machine is then saved as a snapshot, and every later start resumes from it in about 1.6 s.
-- **Sandbox**: commands run under bubblewrap with most root capabilities dropped, the system disk is mounted read-only, and the engine's launch key never appears on the command line or in the file system.
+- **No JIT**: the VM uses QEMU's interpreting backend and runs inside the app's own process, which is why it can ship through TestFlight.
+- **Snapshot resume**: after the first boot the machine is saved as a snapshot, and later starts are ready to run commands in about 1.6 s.
 
 </details>
 
