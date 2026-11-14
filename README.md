@@ -15,7 +15,20 @@ Pallas Agent 是基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepsee
 
 **0.3.4** · 2026-11-14 · 简体中文 / English
 
-<!-- 演示视频 -->
+<p align="center">
+  <a href="assets/pallas-demo.mp4"><img src="assets/pallas-demo-preview.gif" width="270" alt="Pallas Agent 演示：一条消息完成建日历、清洗报名表、在 Mac 上生成简报"></a><br>
+  <a href="assets/pallas-demo.mp4">▶ 看完整视频（42 秒，有声）</a>
+</p>
+
+## 一条消息，三件事
+
+视频里只发了一条消息，Pallas Agent 自己做完了三件事：
+
+1. **看懂海报，建好日历**：从活动海报里读出时间和地点，打开系统日历建好活动，设好提前一小时提醒，再回去核对一遍。
+2. **在手机里跑 Python**：清洗 29 行报名表，去掉重复、标出缺邮箱的人，生成干净的 CSV 和报名统计。
+3. **连上 Mac 接着干**：在电脑上找到最新的安装包，生成一份活动简报网页，再传回手机。
+
+全程用 5G，没接一根线。约 6 分半、41 步，三份文件都回到手机上。
 
 ## 说一句话就能做
 
@@ -23,17 +36,9 @@ Pallas Agent 是基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepsee
 
 手机自己打开备忘录、点按、输入，最后再看一遍屏幕确认。
 
-> 「把这份报销表按月份汇总，做成一张新表。」
-
-手机里的 Linux 用 Python 读写 Excel，新表直接存在手机上。
-
 > 「用我 Mac 上的 ffmpeg 把这段视频转成 MP4。」
 
 视频从手机传到电脑，在电脑上转好，再传回手机。
-
-> 「在电脑上打开备忘录，把这份清单记进去。」
-
-手机指挥电脑，电脑再操作自己的桌面 App。
 
 ## 安装与测试
 

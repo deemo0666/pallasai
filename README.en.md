@@ -15,7 +15,20 @@ Pallas Agent is a native Swift/SwiftUI app built on [DeepSeek Harness](https://g
 
 **0.3.4** · 2026-11-14 · Simplified Chinese / English
 
-<!-- demo video -->
+<p align="center">
+  <a href="assets/pallas-demo.mp4"><img src="assets/pallas-demo-preview.gif" width="270" alt="Pallas Agent demo: one message creates a calendar event, cleans a signup list and builds a brief on a Mac"></a><br>
+  <a href="assets/pallas-demo.mp4">▶ Watch the full video (42 s, with sound)</a>
+</p>
+
+## One message, three jobs
+
+In the video, a single message is sent and Pallas Agent finishes three jobs on its own:
+
+1. **Reads a poster, creates the event**: it reads the date and place from an event poster, creates the event in the system Calendar with a one-hour alert, then goes back to check it.
+2. **Runs Python on the phone**: it cleans a 29-row signup list, removes duplicates, flags a missing email, and produces a clean CSV and a signup report.
+3. **Continues on the Mac**: it finds the latest installer package on the computer, builds an event brief web page, and sends it back to the phone.
+
+All over 5G, with no cable attached. About 6.5 minutes and 41 steps, and all three files end up on the phone.
 
 ## Just say it
 
@@ -23,17 +36,9 @@ Pallas Agent is a native Swift/SwiftUI app built on [DeepSeek Harness](https://g
 
 The phone opens Notes, taps and types, then checks the screen again to confirm.
 
-> "Summarize this expense sheet by month into a new sheet."
-
-The Linux machine on the phone reads and writes Excel with Python, and the new sheet stays on the phone.
-
 > "Use ffmpeg on my Mac to convert this video to MP4."
 
 The video goes from the phone to the computer, gets converted there, and comes back.
-
-> "Open Notes on my computer and put this list in it."
-
-The phone directs the computer, and the computer operates its own desktop app.
 
 ## Installation and beta access
 
