@@ -16,8 +16,8 @@ Pallas Agent is a native Swift/SwiftUI app built on [DeepSeek Harness](https://g
 **0.3.4** · 2026-11-14 · Simplified Chinese / English
 
 <p align="center">
-  <a href="assets/pallas-demo.mp4"><img src="assets/pallas-demo-preview.gif" width="270" alt="Pallas Agent demo: one message creates a calendar event, cleans a signup list and builds a brief on a Mac"></a><br>
-  <a href="assets/pallas-demo.mp4">▶ Watch the full video (42 s, with sound)</a>
+  <a href="assets/pallas-demo-en.mp4"><img src="assets/pallas-demo-en-preview.gif" width="270" alt="Pallas Agent demo: one message creates a calendar event, cleans a signup list and builds a brief on a Mac"></a><br>
+  <a href="assets/pallas-demo-en.mp4">▶ Watch the full video (42 s, with sound)</a>
 </p>
 
 ## One message, three jobs
