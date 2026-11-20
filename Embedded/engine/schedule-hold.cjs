@@ -6,9 +6,11 @@
 // turn is used up, where the same task run with the app in front gets done.
 //
 // Whether a task needs the screen is decided by the model while it runs, so it is learned from the
-// runs: a task whose last runs (up to three, completed ones only) never touched the phone may run
-// in the background; a task that has not completed a run yet, or touched the phone in one of them,
-// waits. With phone control off no task can touch the phone and nothing waits.
+// runs: a task that touched the phone in one of its last runs (up to three) waits; any other task,
+// one that has not run yet included, runs in the background and waits only at its first phone step
+// (`beforePhone`). A task known to use the screen is held before its run starts rather than inside
+// it, because a run waiting in the background keeps its turn open and is lost if iOS ends the app.
+// With phone control off no task can touch the phone and nothing waits.
 //
 // A held task stays due: `deliverDue` answers "these remain due", which the scheduler already
 // understands as "skip them until the next drive request", and coming back in front requests one.
@@ -54,8 +56,13 @@ exports.create = function (initial) {
     const past = load()[id];
     return Array.isArray(past) && past.length > 0 && past.every(used => used === false);
   }
+  /** One of its last runs touched the phone. */
+  function usedScreen(id) {
+    const past = load()[id];
+    return Array.isArray(past) && past.includes(true);
+  }
   const away = () => state.phoneOn && !state.front;
-  const held = id => away() && !screenFree(id);
+  const held = id => away() && usedScreen(id);
 
   function wrap(target) {
     runtime = target;
@@ -71,7 +78,7 @@ exports.create = function (initial) {
   }
 
   return {
-    held, screenFree,
+    held, screenFree, usedScreen,
     /**
      * The `schedule` service; its runtime may be set later, at the end of its own start. Keeps any
      * accessor already on it (task-notes.cjs wraps the same runtime).

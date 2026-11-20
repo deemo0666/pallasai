@@ -174,20 +174,20 @@ final class DueTasks {
     // MARK: - Background refresh
 
     /// A task may need the screen, which no background run has. With phone control on, the engine
-    /// holds a task off screen unless its completed runs so far never touched the phone, and keeps
-    /// what it learned in this file (Embedded/engine/schedule-hold.cjs). A background run is only
-    /// worth asking iOS for when a task would actually go.
-    private static func screenFree() -> Set<String> {
+    /// holds a task off screen when one of its last runs touched the phone, and keeps what it learned
+    /// in this file (Embedded/engine/schedule-hold.cjs); any other task runs and waits only at its first
+    /// phone step. A background run is only worth asking iOS for when a task would actually go.
+    private static func usedScreen() -> Set<String> {
         guard let home = try? FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: false),
               let data = try? Data(contentsOf: home.appendingPathComponent("DSH/ios-task-screen.json")),
               let runs = try? JSONSerialization.jsonObject(with: data) as? [String: [Bool]] else { return [] }
-        return Set(runs.filter { !$0.value.isEmpty && !$0.value.contains(true) }.keys)
+        return Set(runs.filter { $0.value.contains(true) }.keys)
     }
 
     private static func runsOffScreen(_ tasks: [ScheduleItem]) -> [ScheduleItem] {
         guard EmbeddedEngine.enabled else { return [] }
-        let free = screenFree()
-        return tasks.filter { free.contains($0.id) }
+        let used = usedScreen()
+        return tasks.filter { !used.contains($0.id) }
     }
 
     private func submitRefresh(_ tasks: [ScheduleItem], now: Date) {

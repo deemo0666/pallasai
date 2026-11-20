@@ -8,7 +8,8 @@ on:
 
 jobs:
   simulator:
-    runs-on: macos-latest
+    # The app uses iOS 27 APIs: the runner image with Xcode 27.
+    runs-on: xcode-27
     steps:
       - uses: actions/checkout@v4
       - name: Use the newest Xcode
