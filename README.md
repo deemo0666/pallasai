@@ -112,34 +112,6 @@ The demo ran over 5G. The job took about six and a half minutes, and all three o
 - **Sharing and replay** support export as text, an image, Markdown or offline HTML, encrypted share links, and continuing a replay in a new chat.
 - **Activity Review** is in testing in development builds. It captures screen text while you record so Pallas can review what you did and where you got stuck in a new chat.
 
-## Build Pallas Core
-
-This repository contains the Apache 2.0 source for **Pallas Core**. Build it as a standalone iOS app with the same chat interface to run the on-device engine or connect to a remote DeepSeek Harness host.
-
-| Feature | Pallas Core (this source) | Pallas Agent (TestFlight) |
-| --- | --- | --- |
-| Chat, on-device engine, plugins, skills and memory | ✓ | ✓ |
-| System tools, Shortcuts and scheduled tasks | ✓ | ✓ |
-| Connect to remote DSH hosts and hand tasks to paired computers | ✓ | ✓ |
-| Send files and hand off tasks between iPhones and iPads | — | ✓ |
-| On-device Linux VM (bash, Python, npm) | — | ✓ |
-| AI phone calls | — | With a Twilio number and OpenAI API key |
-| Phone control | — | With the companion runner installed |
-| Built-in Tailscale and Claude subscription sign-in | — | ✓ |
-
-To build Core, use a Mac with Xcode 27 and [XcodeGen](https://github.com/yonaskolb/XcodeGen). Building the on-device engine also requires Node.js, npm and Rust (`rustup target add aarch64-apple-ios`).
-
-```sh
-xcodegen generate
-# The on-device engine (optional: without it the app works with remote hosts only)
-python3 Embedded/build.py
-open PallasCore.xcodeproj
-```
-
-Set `PALLAS_CORE_BUNDLE_ID` and `DEVELOPMENT_TEAM` in `project.yml` to your own before running on a device. The iOS Simulator has no on-device engine.
-
-This source is exported from the app's single codebase on every release, so issues and pull requests are welcome here.
-
 ## Related repositories
 
 - Corresponding source for the Linux VM in the TestFlight build, including the Linux kernel, QEMU patches and guest components. [Pallas VM](https://github.com/deemo0666/pallas-vm)
@@ -155,7 +127,7 @@ Questions and suggestions are welcome in [Issues](../../issues).
 
 Copyright © 2026 deemo0666.
 
-The source code in this repository is licensed under the [Apache License 2.0](LICENSE). The names "Pallas", "Pallas Agent" and "Pallas Core", the app icons and logo, the Pallas cat artwork, and the videos and images in `assets/` are not licensed under it; see [NOTICE](NOTICE). You may use them only to refer or link to this project. Builds you distribute need a name and icon of their own.
+The source code in this repository is licensed under the [Apache License 2.0](LICENSE). You may use the project names, app icons and logo, Pallas cat artwork, and videos and images in `assets/` only to refer to or link to this project. Use your own name and icon for builds you distribute. See [NOTICE](NOTICE) for the full terms.
 
 Third-party components keep their own licenses. See `App/ThirdPartyLicenses.txt` and **Settings › About** in the app.
 

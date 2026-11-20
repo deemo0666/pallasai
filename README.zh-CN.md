@@ -112,34 +112,6 @@ Pallas 在设备上看屏幕、点按、滑动和输入，操作后再读屏核�
 - **分享与回放**支持导出文字、图片、Markdown 和离线 HTML，也可生成加密分享链接，或把回放带进新对话继续聊。
 - **操作复盘**正在开发版里测试。录屏时采集屏幕文字，结束后可在新对话里回顾你做了什么、哪里卡住了。
 
-## Pallas Core 自行编译
-
-本仓库提供 **Pallas Core** 的源代码，采用 Apache License 2.0。Core 可编译成独立的 iOS App，用同一套对话界面运行手机上的引擎，或连接远程 DeepSeek Harness。
-
-| 功能 | Pallas Core（本仓库源码） | Pallas Agent（TestFlight） |
-| --- | --- | --- |
-| 对话、本机引擎、插件、技能、记忆 | ✓ | ✓ |
-| 系统工具、快捷指令、定时任务 | ✓ | ✓ |
-| 连接 DSH 远程主机、向配对电脑派任务 | ✓ | ✓ |
-| 多台 iPhone、iPad 之间传文件和派任务 | — | ✓ |
-| 本机 Linux 虚拟机（bash、Python、npm） | — | ✓ |
-| AI 打电话 | — | 配置 Twilio 号码与 OpenAI API Key 后可用 |
-| 手机操控 | — | 安装配套执行器后可用 |
-| 内嵌 Tailscale、Claude 订阅登录 | — | ✓ |
-
-自行编译需要装有 Xcode 27 和 [XcodeGen](https://github.com/yonaskolb/XcodeGen) 的 Mac。编译手机上的引擎还需要 Node.js、npm 和 Rust（`rustup target add aarch64-apple-ios`）。
-
-```sh
-xcodegen generate
-# 手机上的引擎（可选：没有它，App 只能连接远程主机）
-python3 Embedded/build.py
-open PallasCore.xcodeproj
-```
-
-在真机上运行前，把 `project.yml` 里的 `PALLAS_CORE_BUNDLE_ID` 和 `DEVELOPMENT_TEAM` 改成你自己的。iOS 模拟器里没有手机上的引擎。
-
-这里的源码在每次发版时从 App 的同一份代码导出，欢迎在这里提 Issue 和 Pull Request。
-
 ## 相关仓库
 
 - TestFlight 版 Linux 虚拟机的对应源码，包括 Linux 内核、QEMU 补丁和客户机组件。[Pallas VM](https://github.com/deemo0666/pallas-vm)
@@ -155,7 +127,7 @@ open PallasCore.xcodeproj
 
 Copyright © 2026 deemo0666。
 
-本仓库的源代码采用 [Apache License 2.0](LICENSE)。「Pallas」「Pallas Agent」「Pallas Core」名称、App 图标和 logo、兔狲插画以及 `assets/` 里的视频和图片不在此许可范围内，详见 [NOTICE](NOTICE)，只能用来指称或链接本项目。你分发的版本需要换成自己的名称和图标。
+本仓库的源代码采用 [Apache License 2.0](LICENSE)。项目名称、App 图标和 logo、兔狲插画以及 `assets/` 里的视频和图片仅供指称或链接本项目。分发自己的版本时，请使用自己的名称和图标。完整条款见 [NOTICE](NOTICE)。
 
 第三方组件各自沿用其许可证，详见 `App/ThirdPartyLicenses.txt` 和 App 内「设置 › 关于」。
 
