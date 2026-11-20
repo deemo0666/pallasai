@@ -1,11 +1,11 @@
 <h1 align="center">Pallas Agent</h1>
 
 <p align="center">
-  <b>在 iPhone 和 iPad 上替你办事的 AI 助手</b><br>
-  <a href="https://testflight.apple.com/join/73Pbt1su">加入 TestFlight 测试</a> · <a href="README.md">English</a>
+  <b>在 iPhone、iPad 和 Mac 之间协作的 AI 助手</b><br>
+  <a href="https://testflight.apple.com/join/73Pbt1su">加入 TestFlight 测试</a> · <a href="#用-dsh-插件安装手机操控">安装手机操控</a> · <a href="README.md">English</a>
 </p>
 
-在对话里交代任务，Pallas 可以替你打电话订位、把海报里的活动加进系统日历、操作其他 App，或在手机上用 Python 清理表格。配对多台 iPhone、iPad 和 Mac 后，可以在同一个本机对话里按设备名分派工作，把答复和文件收回到发起任务的设备。
+在 iPhone 或 iPad 上交代任务，Pallas 可以替你打电话订位、把活动加进日历、操作其他 App，或者在内置 Linux 里用 Python 处理表格。你也可以按设备名把任务交给配对的另一台 iPhone、iPad，或运行 DSH Web 的 Mac，答复和文件会传回原来的对话。
 
 Pallas Agent 用 Swift 和 SwiftUI 原生开发，内置适配移动设备的 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 引擎。引擎和本机任务在设备上运行，模型推理由你选择的联网服务提供。
 

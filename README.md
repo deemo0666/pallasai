@@ -1,11 +1,11 @@
 <h1 align="center">Pallas Agent</h1>
 
 <p align="center">
-  <b>An AI assistant that gets things done on iOS and Mac</b><br>
-  <a href="https://testflight.apple.com/join/73Pbt1su">Join the TestFlight beta</a> · <a href="README.zh-CN.md">简体中文</a>
+  <b>An AI assistant that works across iPhone, iPad, and Mac</b><br>
+  <a href="https://testflight.apple.com/join/73Pbt1su">Join the TestFlight beta</a> · <a href="#install-phone-control-with-the-dsh-plugin">Set up phone control</a> · <a href="README.zh-CN.md">简体中文</a>
 </p>
 
-Give Pallas a task in chat. It can call a restaurant to book a table, turn an event poster into a calendar entry, operate another app, or clean up a spreadsheet with Python on your phone. Pair multiple iPhones, iPads and Macs, then name the device for each job in the same on-device chat. Replies and files come back to the device that sent the task.
+Start a chat on your iPhone or iPad. Ask Pallas to call a restaurant, add an event to Calendar, use another app, or process a spreadsheet with Python in its built-in Linux environment. You can name another paired iPhone or iPad, or a Mac running DSH Web, to take the task. Pallas brings replies and files back to the original chat.
 
 Pallas Agent is a native Swift and SwiftUI app with a mobile-adapted [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) engine built in. The engine and local tasks run on the device. Model inference uses the online service you choose.
 
