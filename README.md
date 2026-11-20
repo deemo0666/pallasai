@@ -1,136 +1,133 @@
-<p align="center">
-  <img src="assets/pallas-front.webp" width="900" alt="The Pallas cat facing forward against snowy mountains">
-</p>
-
 <h1 align="center">Pallas Agent</h1>
 
 <p align="center">
-  <b>A whole AI agent, inside your iPhone.</b><br>
-  <a href="https://testflight.apple.com/join/73Pbt1su">Get it on TestFlight</a> · <a href="README.zh-CN.md">简体中文</a>
+  <b>An AI assistant that gets things done on iPhone and iPad</b><br>
+  <a href="https://testflight.apple.com/join/73Pbt1su">Join the TestFlight beta</a> · <a href="README.zh-CN.md">简体中文</a>
 </p>
 
-**A real Linux machine runs inside an iPhone app.** bash, Node.js, Python and npm, with no jailbreak and no JIT, installed straight from TestFlight. It can also operate other apps on your phone, and hand tasks to your computer and bring the results back.
+Give Pallas a task in chat. It can call a restaurant to book a table, turn an event poster into a calendar entry, operate another app, or clean up a spreadsheet with Python on your phone. Pair multiple iPhones, iPads and Macs, then name the device for each job in the same on-device chat. Replies and files come back to the device that sent the task.
 
-Pallas Agent is a native Swift/SwiftUI app built on [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). Model inference requires an internet connection: sign in with ChatGPT, use a DeepSeek account, or add any OpenAI-compatible endpoint.
+Pallas Agent is a native Swift and SwiftUI app with a mobile-adapted [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) engine built in. The engine and local tasks run on the device. Model inference uses the online service you choose.
 
 **0.5.1** · 2026-11-18 · iOS 18+
 
 <p align="center">
-  <a href="assets/pallas-demo-en.mp4"><img src="assets/pallas-demo-en-preview.gif" width="270" alt="Pallas Agent demo: one message creates a calendar event, cleans a signup list and builds a brief on a Mac"></a><br>
-  <a href="assets/pallas-demo-en.mp4">▶ Watch the full video (42 s, with sound)</a>
+  <img src="assets/pallas-front.webp" width="900" alt="The Pallas cat facing forward against snowy mountains">
 </p>
 
-## One message, three jobs
+## Getting started
 
-In the video, a single message is sent and Pallas Agent finishes three jobs on its own:
-
-1. **Reads a poster, creates the event**: it reads the date and place from an event poster, creates the event in the system Calendar with a one-hour alert, then goes back to check it.
-2. **Runs Python on the phone**: it cleans a 29-row signup list, removes duplicates, flags a missing email, and produces a clean CSV and a signup report.
-3. **Continues on the Mac**: it finds the latest installer package on the computer, builds an event brief web page, and sends it back to the phone.
-
-All over 5G, with no cable attached. About 6.5 minutes and 41 steps, and all three files end up on the phone.
-
-## Just say it
-
-> "Create a note in Notes titled Friday list, with 'pick up the parcel at 3 pm' as the body."
-
-The phone opens Notes, taps and types, then checks the screen again to confirm.
-
-> "Use ffmpeg on my Mac to convert this video to MP4."
-
-The video goes from the phone to the computer, gets converted there, and comes back.
-
-## Installation and beta access
-
-| Option | Includes | Requires |
-| --- | --- | --- |
-| [TestFlight public beta](https://testflight.apple.com/join/73Pbt1su) | Chat, on-device Linux sandbox, plugins and skills, computer connection | An iPhone or iPad on iOS 18+ |
-| Sideload package (in testing) | All of the above + the phone-control runner | A Mac, a free Apple Account, Developer Mode |
+Install the app from TestFlight, then sign in with ChatGPT or DeepSeek, or add an OpenAI-compatible endpoint. Start a chat under **This iPhone** and switch models from the composer. [AI phone calls](#ai-phone-calls) use a separately configured cloud number and API key. For phone control, [install the companion runner with the DSH plugin](#install-phone-control-with-the-dsh-plugin).
 
 ## What you can do
 
-### Run Linux on your phone
+### AI phone calls
 
-Switch to **This iPhone** and the engine runs on the iPhone itself. The first time the model calls bash, the app boots an arm64 Linux virtual machine inside its own process and mounts the workspace into it. After that, it resumes from a saved machine state and is ready to run commands in **about 1.6 seconds**.
+> “Call this restaurant and book a table for two on Friday night.”
 
-<img src="assets/local-terminal.webp" width="360" alt="The Pallas cat typing at a phone terminal">
+<img src="assets/ai-phone-calls.webp" width="360" alt="A pixel-art Pallas cat holding a phone to its ear">
 
-- **A real shell**: bash, Node.js, npm, Python 3.12, curl, git and ripgrep out of the box. Run scripts and read or write Excel, Word and PowerPoint files.
-- **Files stay on the phone**: the workspace, attachments and generated files live inside the app. Folders you authorize, including all of iCloud Drive, can be read, written and searched by the model.
-- **Plugins and skills that travel with your computer**: install DSH plugins from npm or import a plugin folder from desktop DSH; plugins installed on the phone can be packed and shared back to a computer. Install skills from a GitHub link or a ZIP, tgz or `.skill` package, ready to use immediately.
-- **Local network devices**: the model can find and reach printers, NAS boxes, smart-home hubs, web admin pages and SSH servers on the same network, and can publish services started in Linux to the LAN.
-- **Any model you like**: sign in with ChatGPT or a DeepSeek account, or add any OpenAI-compatible endpoint, then switch from the composer at any time.
+Pallas places a real call from your Twilio number, and a voice AI speaks on your behalf. By default it shows you the recipient, number and purpose before dialing. Follow live captions, listen in, take over with your iPhone’s microphone, hand the call back or hang up. Pallas asks in the app when it needs a decision from you. After the call, you can review the transcript and outcome.
 
-### Control apps on your phone
+Set up a Twilio number for outgoing calls and an OpenAI API key in **Settings → Capabilities → AI Phone Calls**, then tell Pallas what the call should accomplish in an on-device chat.
 
-The phone looks at its own screen, taps, swipes and types, **with no computer nearby**: unplugged, Wi-Fi off, cellular only (verified on an iPhone 17 Pro running iOS 27).
+### Work across multiple iPhones, iPads and Macs
+
+> “Have my iPad in the study clean up this signup sheet, then use my Mac to convert this video to MP4. Send both results back here.”
+
+<img src="assets/device-link.webp" width="360" alt="A pixel-art Pallas cat connecting an iPhone, iPad and Mac">
+
+- To pair **iPhones and iPads**, open **My Devices** in Pallas. Tap **Show This Device’s Code** on one device and **Scan to Connect** on the other. Paired devices can send files directly to one another. When you hand off a task, the receiving device runs it in a new chat. Keep Pallas open with the on-device engine enabled on that device.
+- To add a **Mac**, run `dsh web` with the Pallas pairing plugin. Generate a QR code on the plugin page and scan it from **My Devices** on your iPhone or iPad. Hand the Mac a task and its attachments, and follow its progress on the device that sent it. [Pallas iPhone DSH Plugin](https://github.com/deemo0666/pallas-iphone-dsh-plugin)
+
+**My Devices** discovers devices on the same local network. To connect across networks, join the paired devices to the same Tailscale network.
+
+### Calendar, reminders and scheduled tasks
+
+With permission, Pallas can look up calendar events and contacts, create events and reminders, prepare text or email drafts, and run your existing Shortcuts.
+
+Schedule recurring work. iOS can notify you when it’s due or run the task in the background when the system allows. Work that needs the screen waits for you to open Pallas. You can view past runs and edit the notes Pallas follows next time.
+
+### Control other apps
+
+> “Create a note in Notes called Friday list and write ‘pick up the parcel at 3 pm.’”
 
 <img src="assets/phone-control.webp" width="360" alt="The Pallas cat tapping a note on a phone">
 
-- **It sees the screen**: models that accept images get real screenshots; text-only models get on-device OCR text with positions.
-- **Checks before acting**: a fresh screenshot is compared before every touch; if the screen changed, the model has to look again.
-- **Multi-step navigation**: the model can submit a whole plan at once, and the runner executes and verifies each step.
-- **Key steps ask first**: opening an app, sending, deleting and paying wait for your consent; while another app is in front, you answer with Allow / Don't Allow on a notification. Or switch to fully automatic.
-- **Take over any time**: switching back to Pallas Agent or locking the phone revokes control for the round.
+Pallas reads the screen, taps, swipes and types on the device, then checks the result. Models that accept images can see screenshots. Text models can read text and positions recognized on the device. The runner can check each step of a multi-step plan and have the model look again when the screen changes.
 
-Phone control is off by default and needs the companion runner plus Developer Mode. No jailbreak is required.
+By default, Pallas asks before key actions such as opening an app, sending, deleting or paying. Switch back to Pallas or lock the phone to stop control. After setup, phone control works unplugged. Cellular-only operation was verified on an iPhone 17 Pro running iOS 27.
 
-### Run tasks on your computer
+#### Install phone control with the DSH plugin
 
-The phone can switch to a computer running DeepSeek Harness at any time, or hand a single task to it straight from a phone chat.
+Use a Mac with macOS 13 or later and DSH Web set up, plus a USB cable. First install a Pallas Agent `0.5.1` build that includes **Allow Computer Control** on the iPhone. If you sideloaded the main app under the same Apple Account, use build `0.5.1 (18)` with the original installer's shared entitlements. [Version requirements and setup](https://github.com/deemo0666/pallas-iphone-dsh-plugin#install-into-dsh)
 
-<img src="assets/computer-link.webp" width="360" alt="The Pallas cat transferring a file between laptop and phone">
+1. Download the plugin ZIP on your Mac. In Terminal, change to the folder containing it, then unpack, verify and install the plugin into the DSH Web profile. [Download the macOS plugin v0.3.3](https://github.com/deemo0666/pallas-iphone-dsh-plugin/releases/download/v0.3.3/dsh-local-pair-0.3.3-macos.zip)
 
-- **Automatic discovery**: computers with the pairing plugin announce themselves on the LAN and show up under **Remote Host**; tap one to pair by QR code. A paired computer is found again even after its IP address changes.
-- **QR code or SSH**: the pairing code carries all of the computer's addresses (LAN, Tailscale and so on) and the phone picks one that works. SSH is supported too, including a built-in terminal.
-- **Hand work to the computer from a phone chat**: the model sends the task and files to the computer and runs it once you allow it; a live panel shows each step and the computer's screen, and the output comes back to the phone.
-- **Operate desktop apps**: once the computer has a desktop control tool such as [open-computer-use](https://github.com/iFurySt/open-computer-use), one sentence from the phone is enough for it to read windows, click buttons and type.
+   ```sh
+   unzip dsh-local-pair-0.3.3-macos.zip -d pallas-dsh-0.3.3 &&
+     cd pallas-dsh-0.3.3 &&
+     shasum -a 256 -c SHA256SUMS &&
+     dsh plugin --profile web add ./dsh-local-pair-0.3.3-macos.tgz
+   ```
 
-**Connect to a Harness on your computer**: configure a model on the computer and run `dsh web --no-open`. In the app, under **Remote Host**, enter the computer's LAN or public address and the token from the launch link (on a real device, `127.0.0.1` points to the phone itself).
+2. Start or restart `dsh web` and open the link it prints in your Mac browser. Connect and unlock the iPhone over USB. Tap **Trust** on the iPhone if prompted.
+3. In the DSH Web sidebar, open **Pallas iPhone Control → Install and repair**. Select the iPhone and click **Install phone control**. Follow the installer prompts to sign in with your Apple Account, enter the verification code, and turn on and confirm Developer Mode on the iPhone.
+4. Once DSH shows **Phone control installed**, open Pallas Agent on your iPhone. Under **Settings → Capabilities → Phone Control**, turn it on and tap **Try Phone Control** to verify the installation with Calculator.
 
-## Security
+When the signature expires, reconnect the iPhone to the Mac and click **Install phone control** again. **Repair control runtime** prepares the developer environment for a Runner that's already installed. [The plugin's USB installation guide](https://github.com/deemo0666/pallas-iphone-dsh-plugin#install-the-runner-on-the-iphone)
 
-- **Commands stay in the VM**: bash runs inside the Linux virtual machine and can only reach the mounted workspace; root inside the VM has most of its capabilities removed and cannot modify the system disk.
-- **Phone control is a separate tool**: it lives outside the Linux sandbox, is off by default, and while off the model cannot see it at all.
-- **Key actions need your OK**: sending, deleting and paying on the phone, and tasks and actions on the computer, all ask first.
-- **Keys stay on the phone**: API keys are stored in the system Keychain and used only to authenticate with their own service.
+### Run code and work with files on the phone
+
+<img src="assets/local-terminal.webp" width="360" alt="The Pallas cat typing at a phone terminal">
+
+The first time the local engine calls bash, Pallas starts an arm64 Linux virtual machine and mounts the workspace. QEMU interprets the guest’s instructions, and later runs can resume from a snapshot. The VM includes bash, Python, Node.js, npm, curl, git and ripgrep for running scripts, cleaning up Excel spreadsheets and generating documents.
+
+The workspace, attachments and output live in the app. You can grant Pallas access to read, write and search other folders. Install DSH plugins from npm or import them from a computer. Skills can be imported from a GitHub link or a local package.
+
+### Connect to a remote DSH host
+
+Switch to a computer running `dsh web` from **My Devices** to run the conversation and its tools on that host. To connect by address, enter a DSH Web address reachable from your phone and the token from the launch link under **My Devices → Advanced → Connect with Host Address**. You can also open a remote terminal over SSH.
+
+With a desktop control tool installed on the host, you can operate desktop apps from a remote chat. [open-computer-use](https://github.com/iFurySt/open-computer-use)
+
+## One message, three jobs
+
+<p align="center">
+  <a href="assets/pallas-demo-en.mp4"><img src="assets/pallas-demo-en-preview.gif" width="270" alt="Pallas Agent creates a calendar event, cleans a signup list and builds a brief on a Mac"></a><br>
+  <a href="assets/pallas-demo-en.mp4">▶ Watch the full video (42 seconds, with sound)</a>
+</p>
+
+1. Pallas reads the time and place from an event poster, creates it in Calendar and sets a one-hour alert.
+2. It runs Python on the phone to clean 29 signup rows, remove duplicates, flag missing email and produce a CSV and signup report.
+3. On the paired Mac, it finds the latest installer package, builds an event brief as a web page and sends it back.
+
+The demo ran over 5G. The job took about six and a half minutes, and all three outputs came back to the phone.
 
 ## More features
 
-- **AI phone calls**: "Call the restaurant and book a table for two on Friday." Pallas dials from your Twilio cloud number and a voice AI handles the call, with live captions; listen in, take over or hang up at any time. It confirms who it is calling before dialing and asks you when the other side needs your decision.
-- **Your devices, connected**: iPhone, iPad and computer pair with each other to pass files and tasks back and forth.
-- **Memory**: remembers things about you plus its own notes; view and edit them, let it tidy them up daily, and restore the previous version if needed.
-- **Search past conversations**: the model can full-text search your history to answer "that thing we talked about last time…".
-- **Keeps replying in the background**: leave mid-reply and a system banner shows progress; you get a notification when it's done.
-- **Chat**: streaming output, expandable reasoning, context usage, `/compact`, `/model`, sub-agent transcripts and a built-in browser.
-- **Sessions**: search, pin, folders, archive and status filters; on Apple Intelligence devices, conversation titles come from the on-device Apple model.
-- **Sharing and replay**: export as text, image, Markdown or offline HTML, or create an encrypted share link; replays can be scrubbed and sped up, and "Continue chat" carries a conversation into a new session.
-- **Personalization**: color themes, home screen icons, chat wallpapers, launch screens and text size; split layouts on iPad and foldables.
+- **Memory and history search** help you pick up where you left off. You can view, edit and restore the memories Pallas saves.
+- **Chat** supports streaming, expandable reasoning and tool details, sub-agent transcripts, and a built-in browser. Pin, file or archive conversations, and use the split layout on iPad. API keys are stored in the system Keychain.
+- **Siri, Shortcuts and widgets** can open chats or start tasks. Press-to-talk and continued replies in the background are available from iOS 26.
+- **Sharing and replay** support export as text, an image, Markdown or offline HTML, encrypted share links, and continuing a replay in a new chat.
+- **Activity Review** is in testing in development builds. It captures screen text while you record so Pallas can review what you did and where you got stuck in a new chat.
 
-<details>
-<summary><b>Under the hood: how Linux runs inside an iPhone app</b></summary>
+## Build Pallas Core
 
-- **No JIT**: the VM uses QEMU's interpreting backend and runs inside the app's own process, which is why it can ship through TestFlight.
-- **Snapshot resume**: after the first boot the machine is saved as a snapshot, and later starts are ready to run commands in about 1.6 s.
+This repository contains the Apache 2.0 source for **Pallas Core**. Build it as a standalone iOS app with the same chat interface to run the on-device engine or connect to a remote DeepSeek Harness host.
 
-</details>
-
-## Pallas Core: build it yourself
-
-This repository holds the source of **Pallas Core**, the open part of Pallas Agent, under the Apache License 2.0. Core is a complete app: chat with streaming and reasoning, the on-device engine (without the Linux machine, so without bash), remote hosts over `dsh web` and SSH, your own API keys and any OpenAI-compatible endpoint, ChatGPT and DeepSeek sign-in, plugins and skills, memory, scheduled tasks, calendar, reminders, contacts and mail connectors, handing tasks to a paired computer, sharing and replay, widgets and Shortcuts.
-
-The TestFlight app adds what Core leaves out: the Linux machine (bash, Python, npm), phone control, AI phone calls, activity review, device-to-device link, embedded Tailscale and Claude subscription sign-in.
-
-| | Pallas Core (this source) | Pallas Agent (TestFlight) |
+| Feature | Pallas Core (this source) | Pallas Agent (TestFlight) |
 | --- | --- | --- |
-| Chat, models, plugins, skills, memory | ✓ | ✓ |
-| On-device engine | ✓ | ✓ |
-| Remote hosts, hand tasks to a computer | ✓ | ✓ |
-| Linux machine (bash, Python, npm) | | ✓ |
-| Phone control, AI phone calls, activity review | | ✓ |
-| Device-to-device link, embedded Tailscale | | ✓ |
+| Chat, on-device engine, plugins, skills and memory | ✓ | ✓ |
+| System tools, Shortcuts and scheduled tasks | ✓ | ✓ |
+| Connect to remote DSH hosts and hand tasks to paired computers | ✓ | ✓ |
+| Send files and hand off tasks between iPhones and iPads | — | ✓ |
+| On-device Linux VM (bash, Python, npm) | — | ✓ |
+| AI phone calls | — | With a Twilio number and OpenAI API key |
+| Phone control | — | With the companion runner installed |
+| Built-in Tailscale and Claude subscription sign-in | — | ✓ |
 
-**Requirements:** a Mac with Xcode 27, [XcodeGen](https://github.com/yonaskolb/XcodeGen), and for the on-device engine also Node.js, npm and Rust (`rustup target add aarch64-apple-ios`).
+To build Core, use a Mac with Xcode 27 and [XcodeGen](https://github.com/yonaskolb/XcodeGen). Building the on-device engine also requires Node.js, npm and Rust (`rustup target add aarch64-apple-ios`).
 
 ```sh
 xcodegen generate
@@ -143,6 +140,13 @@ Set `PALLAS_CORE_BUNDLE_ID` and `DEVELOPMENT_TEAM` in `project.yml` to your own 
 
 This source is exported from the app's single codebase on every release, so issues and pull requests are welcome here.
 
+## Related repositories
+
+- Corresponding source for the Linux VM in the TestFlight build, including the Linux kernel, QEMU patches and guest components. [Pallas VM](https://github.com/deemo0666/pallas-vm)
+- The upstream project for Pallas's built-in engine, the `dsh` command and the DSH Web host. [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness)
+- Computer pairing, iPhone control and USB setup in DSH Web. [Pallas iPhone DSH Plugin](https://github.com/deemo0666/pallas-iphone-dsh-plugin)
+- The companion runner for screen reading, taps and typing on iPhone, with a macOS installer kit. [Pallas iPhone Runner](https://github.com/deemo0666/pallas-iphone-runner)
+
 ## Feedback
 
 Questions and suggestions are welcome in [Issues](../../issues).
@@ -153,6 +157,6 @@ Copyright © 2026 deemo0666.
 
 The source code in this repository is licensed under the [Apache License 2.0](LICENSE). The names "Pallas", "Pallas Agent" and "Pallas Core", the app icons and logo, the Pallas cat artwork, and the videos and images in `assets/` are not licensed under it; see [NOTICE](NOTICE). You may use them only to refer or link to this project. Builds you distribute need a name and icon of their own.
 
-Third-party components keep their own licenses: see `App/ThirdPartyLicenses.txt`, and in the app **Settings › About**. The source code for the QEMU and Linux guest in the TestFlight app is published in [Pallas VM](https://github.com/deemo0666/pallas-vm).
+Third-party components keep their own licenses. See `App/ThirdPartyLicenses.txt` and **Settings › About** in the app.
 
 Pallas Agent is an independent project and is not affiliated with DeepSeek.
