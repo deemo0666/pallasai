@@ -1,7 +1,7 @@
 <h1 align="center">Pallas Agent</h1>
 
 <p align="center">
-  <b>An AI assistant that gets things done on iPhone and iPad</b><br>
+  <b>An AI assistant that gets things done on iOS and Mac</b><br>
   <a href="https://testflight.apple.com/join/73Pbt1su">Join the TestFlight beta</a> · <a href="README.zh-CN.md">简体中文</a>
 </p>
 
