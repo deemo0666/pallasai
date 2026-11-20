@@ -43,6 +43,8 @@ final class PhoneConfirmation: ObservableObject {
         let step: String
         /// Allowing needs the device owner: Face ID, else the passcode.
         let owner: Bool
+        /// 「这一轮都允许」 is offered next to 允许.
+        var all = false
     }
 
     /// The question shown inside Pallas Agent.
@@ -50,6 +52,8 @@ final class PhoneConfirmation: ObservableObject {
     private var waiting: [UUID: (owner: UUID, resume: CheckedContinuation<Bool?, Never>)] = [:]
     /// Face ID or passcode checks still on screen, by question.
     private var checking: [UUID: LAContext] = [:]
+    /// Questions answered 「这一轮都允许」, until their `ask` reads the answer.
+    private var allowedAll: Set<UUID> = []
 
     static func registerCategory() {
         // On the Lock Screen, 允许 asks for Face ID or the passcode first.
@@ -73,10 +77,16 @@ final class PhoneConfirmation: ObservableObject {
     /// `serious`: the step pays, sends, deletes or orders; in the `faceID` mode allowing it in Pallas Agent needs the device owner.
     /// A notification cannot ask for Face ID while another app is in front; its 允许 needs the iPhone unlocked.
     func ask(_ step: String, owner: UUID, serious: Bool = false) async -> Outcome {
+        await ask(step, owner: owner, serious: serious, offerAll: false).outcome
+    }
+
+    /// `offerAll`: the question inside Pallas Agent also offers 「这一轮都允许」, and `all` says it was picked.
+    /// Banners and the Live Activity keep 允许 / 不允许, which allow this step only.
+    func ask(_ step: String, owner: UUID, serious: Bool = false, offerAll: Bool) async -> (outcome: Outcome, all: Bool) {
         cancel(owner)
         let token = UUID()
         if UIApplication.shared.applicationState == .active {
-            question = Question(id: token, step: step, owner: serious && Self.mode == .faceID)
+            question = Question(id: token, step: step, owner: serious && Self.mode == .faceID, all: offerAll && !(serious && Self.mode == .faceID))
         } else if !(serious && Self.mode == .faceID), await TaskActivity.shared.ask(step, token: token) {
             // 允许 / 不允许 are on the Live Activity (`AllowStepIntent`), which answers without bringing Pallas Agent forward.
             // The reminder still goes out as a banner, whose long-press buttons answer even when the Live Activity's cannot.
@@ -84,7 +94,7 @@ final class PhoneConfirmation: ObservableObject {
         } else {
             let center = UNUserNotificationCenter.current()
             let status = await center.notificationSettings().authorizationStatus
-            guard status == .authorized || status == .ephemeral else { return .unavailable }
+            guard status == .authorized || status == .ephemeral else { return (.unavailable, false) }
             let content = UNMutableNotificationContent()
             content.title = String(localized: "要继续这一步吗？")
             // Opening the banner brings Pallas Agent to the front, which ends the turn: the buttons are under a long press.
@@ -95,7 +105,7 @@ final class PhoneConfirmation: ObservableObject {
             // Gets through a Focus: the step waits on this answer.
             content.interruptionLevel = .timeSensitive
             do { try await center.add(UNNotificationRequest(identifier: Self.identifier(token), content: content, trigger: nil)) }
-            catch { return .unavailable }
+            catch { return (.unavailable, false) }
             // Nothing can count down on a banner, so a second one says the wait is about to end.
             await Self.remind(step, token: token)
         }
@@ -106,10 +116,11 @@ final class PhoneConfirmation: ObservableObject {
                 self.answer(token, allowed: nil)
             }
         }
+        let all = allowedAll.remove(token) != nil
         switch answer {
-        case true?: return .allowed
-        case false?: return .denied
-        case nil: return .timedOut
+        case true?: return (.allowed, all)
+        case false?: return (.denied, false)
+        case nil: return (.timedOut, false)
         }
     }
 
@@ -126,9 +137,10 @@ final class PhoneConfirmation: ObservableObject {
                                                           trigger: UNTimeIntervalNotificationTrigger(timeInterval: remindAfter, repeats: false)))
     }
 
-    /// `allowed` nil: nobody answered in time.
-    func answer(_ token: UUID, allowed: Bool?) {
+    /// `allowed` nil: nobody answered in time. `all`: 「这一轮都允许」.
+    func answer(_ token: UUID, allowed: Bool?, all: Bool = false) {
         if question?.id == token { question = nil }
+        if all, allowed == true, waiting[token] != nil { allowedAll.insert(token) }
         TaskActivity.shared.answered(token)
         // Timed out or cancelled while iOS was asking: take its sheet away.
         checking.removeValue(forKey: token)?.invalidate()
@@ -178,10 +190,12 @@ final class PhoneConfirmation: ObservableObject {
     /// How long a question waits, as the in-app question says it.
     static var waitNote: String { String(localized: "2 分钟内没有回答，这一步就不执行。") }
 
-    /// True when 关键步骤先问我 is chosen but iOS will not show the banner that asks.
+    /// True when 关键步骤先问我 is chosen but iOS will not show the banner that asks: the same test `ask` makes,
+    /// so quiet (provisional) delivery and a never-answered prompt count too, and the person hears it before a task, not in the middle.
     static func cannotAsk() async -> Bool {
         guard asks else { return false }
-        return await UNUserNotificationCenter.current().notificationSettings().authorizationStatus == .denied
+        let status = await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
+        return status != .authorized && status != .ephemeral
     }
 
     // MARK: - App names
@@ -242,6 +256,7 @@ struct PhoneConfirmationPrompt: ViewModifier {
         content.alert("要继续这一步吗？", isPresented: Binding(get: { confirmation.question != nil }, set: { _ in }),
                       presenting: confirmation.question) { question in
             Button("允许") { confirmation.allow(question) }
+            if question.all { Button("这一轮都允许") { confirmation.answer(question.id, allowed: true, all: true) } }
             Button("不允许", role: .cancel) { confirmation.answer(question.id, allowed: false) }
         } message: { question in
             Text(verbatim: question.step + "\n" + PhoneConfirmation.waitNote)

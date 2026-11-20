@@ -54,6 +54,10 @@ enum ConnectorID: String, CaseIterable, Identifiable, Codable {
         }
     }
 
+    /// The connectors this build can offer: a mail service needs its OAuth client ID, which builds without
+    /// PALLAS_GOOGLE_CLIENT_ID / PALLAS_MICROSOFT_CLIENT_ID lack. Lists show these, not `allCases`.
+    static var available: [ConnectorID] { allCases.filter { $0.mail.map { $0.clientID != nil } ?? true } }
+
     var installed: Bool {
         guard let scheme = appScheme else { return true }
         return URL(string: scheme).map { UIApplication.shared.canOpenURL($0) } ?? false
@@ -94,9 +98,10 @@ enum Connectors {
 
     /// Connectors a computer may use now: switched on for computers and usable (permission given, account signed in).
     @MainActor static func offeredToComputers() -> [ConnectorID] {
-        ConnectorID.allCases.filter { id in
+        ConnectorID.available.filter { id in
             guard allowed(id, .computer) else { return false }
             if let provider = id.mail { return MailAccounts.shared.account(provider) != nil }
+            if let permission = id.permission { return SystemAccess.allowsReading(permission) }
             return true
         }
     }

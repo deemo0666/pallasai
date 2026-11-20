@@ -226,6 +226,8 @@ struct HostLibrary: View {
     @State private var removing: HostProfile?
     /// The paired computer whose row was tapped: asks which of the two ways to use it.
     @State private var choosing: HostProfile?
+    /// A paired computer's page: what this device lets it do, and what to do with it.
+    @State private var detail: HostProfile?
     @State private var fresh: Fresh?
     /// Held until the scanner has closed, so the question that follows is not lost under it.
     @State private var arriving: Fresh?
@@ -1238,3 +1240,4 @@ struct LanPairPage: View {
         return String(localized: "没能连上这台电脑")
     }
 }
+

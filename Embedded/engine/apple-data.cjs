@@ -90,7 +90,11 @@ exports.bridge = function bridge(send, { desktop = false } = {}) {
             pending.set(id, finish);
             exec.signal?.addEventListener('abort', abort, {once: true});
             try {
+              // The conversation's turn: one 「这一轮都允许」 covers that turn's later writes of the same kind.
+              const session = exec.agent?.session;
+              const turn = session?.id ? ctx.agents?.turnBoundaryOf?.(session)?.lastTurn : undefined;
               send({ appleDataRequest: id, tool: tool.name, args: clean(args),
+                ...(['number', 'string'].includes(typeof turn) ? { turn: `${session.id}#${turn}` } : {}),
                 ...(desktop ? { approval: approvalPolicy(exec.agent?.session) } : {}),
                 ...(require('./full-auto.cjs').isOn(exec.agent?.session?.id) ? { auto: true } : {}) });
             } catch (error) { finish(error); }

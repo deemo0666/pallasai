@@ -20,6 +20,10 @@ final class AppleData {
     private var running: [UUID: Task<String, Never>] = [:]
     #if os(iOS)
     private var composer: Composer?
+    /// 「这一轮都允许」: "<turn>|<action>" for the rest of that turn, with when it was given.
+    private var allowedForTurn: [String: Date] = [:]
+    /// A question already out for that turn and action; the next write of the kind waits for its answer.
+    private var asking: [String: Task<Void, Never>] = [:]
     #endif
 
     init(events: EKEventStore = EKEventStore(), contacts: CNContactStore = CNContactStore()) {
@@ -34,10 +38,12 @@ final class AppleData {
         let approval: String?
         /// 全自动: the calling conversation asks nothing (FullAuto).
         var auto: Bool? = nil
+        /// The conversation turn that called, "<session>#<turn>"; absent for a computer's call.
+        var turn: String? = nil
         /// Set for a paired computer's call; never read from the engine.
         var fromComputer = false
 
-        private enum CodingKeys: String, CodingKey { case appleDataRequest, tool, args, approval, auto }
+        private enum CodingKeys: String, CodingKey { case appleDataRequest, tool, args, approval, auto, turn }
 
         init(appleDataRequest: UUID, tool: String, args: Args, approval: String? = nil, fromComputer: Bool = false) {
             self.appleDataRequest = appleDataRequest; self.tool = tool; self.args = args
@@ -145,11 +151,28 @@ final class AppleData {
     static var asksBeforeWriting: Bool { PhoneConfirmation.asks }
     #endif
 
-    /// `always`: sending mail asks in every mode, 全程自动 included.
+    /// `always`: sending mail asks in every mode, 全程自动 included, and every message by itself.
     private func confirm(_ step: String, for request: Request, always: Bool = false) async throws {
         #if os(iOS)
         guard request.auto != true, always || Self.asksBeforeWriting else { return }
-        let outcome = await PhoneConfirmation.shared.ask(step, owner: request.appleDataRequest, serious: always)
+        // Calendar and reminder writes: one 「这一轮都允许」 covers the turn's later ones of the same action.
+        let key = always ? nil : request.turn.map { "\($0)|\(request.args.action ?? request.tool)" }
+        if let key {
+            while let earlier = asking[key] { await earlier.value }
+            try Task.checkCancellation()
+            if allowedForTurn[key] != nil { return }
+        }
+        let question = Task { await PhoneConfirmation.shared.ask(step, owner: request.appleDataRequest, serious: always, offerAll: key != nil) }
+        if let key { asking[key] = Task { _ = await question.value } }
+        let (outcome, all) = await question.value  // cancel(_:) answers it 不允许
+        if let key {
+            asking[key] = nil
+            if outcome == .allowed, all {
+                // A turn lasts minutes, rarely hours; older entries belong to turns long over.
+                allowedForTurn = allowedForTurn.filter { $0.value.timeIntervalSinceNow > -6 * 3600 }
+                allowedForTurn[key] = Date()
+            }
+        }
         #elseif os(macOS)
         guard request.approval != "never" else { return }
         let outcome = await MacTaskConfirmation.shared.ask(step, owner: request.appleDataRequest)
@@ -158,7 +181,7 @@ final class AppleData {
         switch outcome {
         case .allowed: return
         case .denied: throw Failure("denied", "The user did not allow this; nothing was changed. Do not try again another way.")
-        case .timedOut: throw Failure("confirm_timeout", "The user did not answer within two minutes; nothing was changed.")
+        case .timedOut: throw Failure("confirm_timeout", "The user did not answer within two minutes; nothing was changed. Tell them, and that saying 继续 asks again.")
         #if os(iOS)
         case .unavailable: throw Failure("confirm_unavailable", "Pallas Agent is not in front and notifications are off, so the user could not be asked; nothing was changed.")
         #endif
@@ -296,14 +319,15 @@ final class AppleData {
         return Failure("authorization_denied", "\(service) access is off. The user can allow Pallas Agent in \(path).")
     }
 
-    /// Adding asks only for write access; reading upgrades to full access.
+    /// Adding is fine with write access, reading needs full access. The first question asks for full access,
+    /// since the same tool both adds and reads, so the person is not asked a second time later.
     private func eventAccess(full: Bool) async throws {
         let status = type(of: events).authorizationStatus(for: .event)
         if status == .fullAccess || (!full && status == .writeOnly) { return }
         if status == .denied || status == .restricted {
             throw authorizationDenied("Calendars")
         }
-        let granted = full ? try await events.requestFullAccessToEvents() : try await events.requestWriteOnlyAccessToEvents()
+        let granted = try await events.requestFullAccessToEvents()
         guard granted else {
             throw Failure("authorization_denied", full ? "The user did not allow reading the calendar." : "The user did not allow adding to the calendar.")
         }
@@ -332,9 +356,10 @@ final class AppleData {
         let when = Self.shown(start.date, dayOnly: allDay)
         let step = if let location = args.location, !location.isEmpty { String(localized: "加到日历：\(title)，\(when)，\(location)") }
             else { String(localized: "加到日历：\(title)，\(when)") }
-        try await confirm(step, for: request)
-        try Task.checkCancellation()
+        // iOS's own question first: a refusal there must not use up the person's 允许.
         try await eventAccess(full: false)
+        try Task.checkCancellation()
+        try await confirm(step, for: request)
         try Task.checkCancellation()
         let event = EKEvent(eventStore: events)
         event.title = title
@@ -399,9 +424,9 @@ final class AppleData {
         let due = try time(args.due, "due")
         let step = if let due { String(localized: "加到提醒事项：\(title)，\(Self.shown(due.date, dayOnly: due.dayOnly))") }
             else { String(localized: "加到提醒事项：\(title)") }
-        try await confirm(step, for: request)
-        try Task.checkCancellation()
         try await reminderAccess()
+        try Task.checkCancellation()
+        try await confirm(step, for: request)
         try Task.checkCancellation()
         let reminder = EKReminder(eventStore: events)
         reminder.title = title

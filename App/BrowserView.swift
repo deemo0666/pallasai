@@ -86,14 +86,6 @@ struct BrowserView: View {
             if loading { ProgressView(value: progress).progressViewStyle(.linear) }
             BrowserSurface(web: web).opacity(url == nil && !loading ? 0 : 1)
                 .ignoresSafeArea(.container, edges: .bottom)
-                .overlay {
-                    if url == nil && !loading {
-                        Text("还没有打开网页。模型调用浏览器工具后，这里会显示当前页面。")
-                            .font(.body).foregroundStyle(ChatColors.ink).multilineTextAlignment(.center)
-                            .padding(24).frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .accessibilityIdentifier("browserIdle")
-                    }
-                }
         }
         .background(ChatColors.adaptive(0xf9fafb, 0x1c2129).ignoresSafeArea())
         .onAppear {
@@ -101,6 +93,12 @@ struct BrowserView: View {
             started = true
             web.allowsBackForwardNavigationGestures = true
             if let initialURL, BrowserRoute.accepts(initialURL), initialURL != web.url { web.load(URLRequest(url: initialURL)) }
+            // Nothing open yet: start at the address bar, ready to type.
+            else if web.url == nil && !web.isLoading {
+                controls = true
+                // Focus once the cover has finished sliding in; set during the transition it is dropped.
+                Task { try? await Task.sleep(for: .milliseconds(400)); editing = true }
+            }
         }
         .onReceive(web.publisher(for: \.url)) { value in url = value; if !editing { address = value?.absoluteString ?? "" } }
         .onReceive(web.publisher(for: \.title)) { title = $0 ?? "" }

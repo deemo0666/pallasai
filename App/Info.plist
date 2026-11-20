@@ -6,6 +6,7 @@
 	<array>
 		<string>$(PRODUCT_BUNDLE_IDENTIFIER).memory.dream</string>
 		<string>$(PRODUCT_BUNDLE_IDENTIFIER).turn</string>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER).notice.watch</string>
 		<string>$(PRODUCT_BUNDLE_IDENTIFIER).pairing</string>
 		<string>$(PRODUCT_BUNDLE_IDENTIFIER).tasks.due</string>
 	</array>

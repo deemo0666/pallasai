@@ -412,7 +412,6 @@ struct PreferencesView: View {
         }
     }
 
-
     private var notifyValue: (text: String, color: Color?) {
         if !notifyEnabled { return (String(localized: "已关闭"), ChatColors.muted.opacity(0.7)) }
         if notifyStatus == .denied { return (String(localized: "系统已关闭"), SettingsStyle.warning) }

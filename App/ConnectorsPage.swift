@@ -11,8 +11,8 @@ struct ConnectorsPage: View {
     /// Bumped when a switch changes, so the rows read UserDefaults again.
     @State private var revision = 0
 
-    private var found: [ConnectorID] { ConnectorID.allCases.filter { installed.contains($0) } }
-    private var more: [ConnectorID] { ConnectorID.allCases.filter { !installed.contains($0) } }
+    private var found: [ConnectorID] { ConnectorID.available.filter { installed.contains($0) } }
+    private var more: [ConnectorID] { ConnectorID.available.filter { !installed.contains($0) } }
 
     var body: some View {
         ScrollView {
@@ -51,9 +51,9 @@ struct ConnectorsPage: View {
     }
 
     private func scan() async {
-        installed = Set(ConnectorID.allCases.filter(\.installed))
+        installed = Set(ConnectorID.available.filter(\.installed))
         var next: [ConnectorID: PermissionState] = [:]
-        for id in ConnectorID.allCases {
+        for id in ConnectorID.available {
             if let permission = id.permission { next[id] = await SystemAccess.read(permission) }
         }
         states = next

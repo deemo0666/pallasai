@@ -181,6 +181,22 @@ enum SystemAccess {
         }
     }
 
+    /// Whether a personal-data store (calendar, reminders, contacts) is open to Pallas now, read without asking
+    /// and without waiting, for lists built on the spot. Other permissions answer false.
+    static func allowsReading(_ permission: SystemPermission) -> Bool {
+        switch permission {
+        case .calendar: return [.fullAccess, .writeOnly].contains(EKEventStore.authorizationStatus(for: .event))
+        case .reminders: return EKEventStore.authorizationStatus(for: .reminder) == .fullAccess
+        case .contacts:
+            let status = CNContactStore.authorizationStatus(for: .contacts)
+            #if os(iOS)
+            if #available(iOS 18.0, *), status == .limited { return true }
+            #endif
+            return status == .authorized
+        default: return false
+        }
+    }
+
     /// Asks the system, as the feature would on first use; returns where it stands after.
     static func request(_ permission: SystemPermission) async -> PermissionState {
         switch permission {
@@ -195,10 +211,8 @@ enum SystemAccess {
         case .photosAdd: _ = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
         case .notifications: _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
         case .calendar:
-            // First use only adds events; from 部分允许 a tap asks to read the calendar too.
-            let store = AppleData.shared.events
-            if EKEventStore.authorizationStatus(for: .event) == .writeOnly { _ = try? await store.requestFullAccessToEvents() }
-            else { _ = try? await store.requestWriteOnlyAccessToEvents() }
+            // The AI both adds and reads events: one question for full access, also from 部分允许.
+            _ = try? await AppleData.shared.events.requestFullAccessToEvents()
         case .reminders: _ = try? await AppleData.shared.events.requestFullAccessToReminders()
         case .contacts:
             #if os(iOS)
