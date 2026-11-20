@@ -1,0 +1,12 @@
+Pallas Agent / Pallas Core
+Copyright 2026 deemo0666
+
+The source code in this repository is licensed under the Apache License, Version 2.0 (LICENSE).
+
+Not licensed under the Apache License (see its section 6): the names "Pallas", "Pallas Agent" and
+"Pallas Core"; the app icons and logo (App/Assets.xcassets and the launch artwork); the Pallas cat
+artwork; and the videos and images in assets/. You may use them only to refer or link to this
+project. Builds you distribute need a name and icon of their own.
+
+Third-party components keep their own licenses; see App/ThirdPartyLicenses.txt. The on-device engine
+is built from DeepSeek Harness (MIT), with the changes in Embedded/patches.

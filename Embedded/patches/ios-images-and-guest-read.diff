@@ -1,0 +1,92 @@
+--- a/node_modules/@deepseek-ai/dsh-attachment-local/lib/index.js
++++ b/node_modules/@deepseek-ai/dsh-attachment-local/lib/index.js
+@@ -164,7 +164,22 @@
+ * @param data - complete encoded image bytes.
+ * @returns verified format and dimensions.
+ */
++let iosImageCodec;
++function iosRaster(data, maxSide = 0, maxPixels = 0, maxBytes = 0) {
++	try {
++		if (!iosImageCodec) {
++			const binding = { exports: {} };
++			process.dlopen(binding, process.env.DSH_SYSTEM_FRAMEWORK);
++			iosImageCodec = binding.exports.imageCodec;
++		}
++		const raster = iosImageCodec(Buffer.from(data.buffer, data.byteOffset, data.byteLength), maxSide, maxPixels, maxBytes);
++		return { ...raster, depth: "uchar", space: "srgb" };
++	} catch (error) {
++		throw new AttachmentError("Image codec failed.", error.code === "ATTACHMENT_WRITE_FAILED" ? error.code : "INVALID_IMAGE", { cause: error });
++	}
++}
+ async function probeImage(data) {
++	if (process.platform === "ios") return iosRaster(data);
+ 	const sharp = requireSharp();
+ 	try {
+ 		return await imageMetadata(sharp(data, {
+@@ -183,6 +198,12 @@
+ * @returns verified format and dimensions.
+ */
+ async function detectImage(data, limits) {
++	if (process.platform === "ios") {
++		const facts = iosRaster(data);
++		if (facts.width * facts.height > limits?.maxPixels) throw new AttachmentError("Image exceeds the configured decoded-pixel limit.", "IMAGE_TOO_MANY_PIXELS");
++		if (Math.max(facts.width, facts.height) > limits?.maxDimension) throw new AttachmentError("Image exceeds the configured per-side pixel limit.", "IMAGE_DIMENSION_TOO_LARGE");
++		return facts;
++	}
+ 	const sharp = requireSharp();
+ 	try {
+ 		const image = sharp(data, {
+@@ -253,6 +274,7 @@
+ * @returns verified provider-independent normalized bytes and metadata.
+ */
+ async function normalizeImage(data, detected, policy) {
++	if (process.platform === "ios") return iosRaster(data, policy.maxDimension, policy.maxPixels, policy.maxBytes);
+ 	if (canPassThroughNormalization(detected, data.byteLength, policy)) return {
+ 		data,
+ 		mediaType: detected.mediaType,
+@@ -409,7 +431,10 @@
+ async function ensureDurableHome(path) {
+ 	const home = resolve(path);
+ 	if (!durableHomes.has(home)) {
+-		await ensureDurableDirectory(home, parse(home).root);
++		// The app container is an OS-provisioned durability boundary. Its parents
++		// are outside the iOS sandbox and cannot be opened for directory fsync.
++		const boundary = process.platform === "ios" ? dirname(dirname(home)) : parse(home).root;
++		await ensureDurableDirectory(home, boundary);
+ 		durableHomes.add(home);
+ 	}
+ 	return home;
+@@ -815,6 +840,7 @@
+ 		width: attachment.ref.width,
+ 		height: attachment.ref.height
+ 	};
++	if (process.platform === "ios") return iosRaster(attachment.data, Math.max(target.width, target.height), target.width * target.height, target.maxBytes);
+ 	const encodedVersion = await encodeFirstWithinLimit(encodingLadder(pipeline(attachment, target), hasAlpha), target.maxBytes);
+ 	return isExhaustedEncoding(encodedVersion) ? encodedVersion.smallest : encodedVersion;
+ }
+--- a/node_modules/@deepseek-ai/dsh-tool-fs/lib/index.js
++++ b/node_modules/@deepseek-ai/dsh-tool-fs/lib/index.js
+@@ -342,6 +342,23 @@
+ 		isConcurrencySafe: () => true,
+ 		async execute(args, exec) {
+ 			const input = parseReadArgs(args, caps.limit);
++			if (process.platform === "ios") {
++				input.filePath = input.filePath.replace(/^~(?=\/|$)/, "/root");
++				const { guestReadPath } = globalThis[Symbol.for("dsh.local.workspace")];
++				const path = guestReadPath(input.filePath, (await sessionResolveOptions(ctx, exec)).cwd);
++				if (path !== undefined) {
++					const guest = await import(process.env.DSH_IOS_SHELL_MODULE);
++					try {
++						const window = await buildWindow(guest.readText(path, exec.signal), {
++							offset: input.offset, limit: input.limit, maxLineLength: caps.maxLineLength, maxBytes: caps.maxBytes
++						}, path);
++						return { path, offset: input.offset, lines: window.lines, totalLines: window.totalLines };
++					} catch (error) {
++						if (error.code?.startsWith("FS_")) throw new FsError(error.message, error.code);
++						throw error;
++					}
++				}
++			}
+ 			const { target, info } = await resolveRegularReadTarget(ctx, exec, input.filePath);
+ 			const window = await buildWindow(info.size === void 0 || info.size >= caps.streamMinSize ? await ctx.fs.streamText(target, exec.signal) : [await ctx.fs.readText(target, exec.signal)], {
+ 				offset: input.offset,

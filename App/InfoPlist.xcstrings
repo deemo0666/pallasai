@@ -1,0 +1,787 @@
+{
+  "sourceLanguage" : "zh-Hans",
+  "strings" : {
+    "NSCalendarsFullAccessUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Liest deinen Kalender, wenn du Pallas nach deinen Terminen fragst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reads your calendar when you ask Pallas what's on your schedule."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lee tu calendario cuando le pides a Pallas que consulte tu agenda."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lit votre calendrier lorsque vous demandez à Pallas ce que contient votre agenda."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Legge il tuo calendario quando chiedi a Pallas cosa hai in programma."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "予定を確認するよう Pallas に頼んだときに、カレンダーを読み取ります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pallas에 일정을 물어보면 캘린더를 읽어요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lê o seu calendário quando você pede ao Pallas para ver a sua agenda."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Читает ваш календарь, когда вы просите Pallas посмотреть расписание."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你让 Pallas 查日程时，读取你的日历。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你請 Pallas 查行程時，讀取你的行事曆。"
+          }
+        }
+      }
+    },
+    "NSCalendarsWriteOnlyAccessUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trägt Termine, die du Pallas nennst, in deinen Kalender ein."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adds the events you ask Pallas for to your calendar."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añade a tu calendario los eventos que le pides a Pallas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoute à votre calendrier les événements que vous demandez à Pallas de créer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiunge al tuo calendario gli eventi che chiedi a Pallas."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "予定の追加を Pallas に頼んだときに、カレンダーに追加します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pallas에 일정 추가를 요청하면 캘린더에 추가해요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adiciona ao seu calendário os eventos que você pede ao Pallas."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Добавляет в ваш календарь события, о которых вы просите Pallas."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你让 Pallas 加日程时，把它加到你的日历里。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你請 Pallas 加行程時，把它加到你的行事曆中。"
+          }
+        }
+      }
+    },
+    "NSCameraUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scannt den Kopplungscode auf deinem Computer, um ihn mit diesem Gerät zu verbinden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scans the pairing code shown on your computer to connect it to this device."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escanea el código de emparejamiento que muestra tu ordenador para conectarlo a este dispositivo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scanne le code d’association affiché sur votre ordinateur pour le connecter à cet appareil."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inquadra il codice di abbinamento mostrato sul computer per collegarlo a questo dispositivo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コンピュータに表示されたペアリングコードを読み取って、このデバイスと接続します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "컴퓨터에 표시된 페어링 코드를 스캔해 이 기기와 컴퓨터를 연결해요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lê o código de pareamento exibido no computador para conectá-lo a este dispositivo."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сканирует код сопряжения на компьютере, чтобы подключить его к этому устройству."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用来扫描电脑上显示的配对码，连接这台设备和你的电脑。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用來掃描電腦上顯示的配對碼，連接這部裝置和你的電腦。"
+          }
+        }
+      }
+    },
+    "NSContactsUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sucht Nummer oder E-Mail-Adresse einer Person, wenn du Pallas bittest, ihr zu schreiben."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Looks up someone's number or email when you ask Pallas to text or email them."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Busca el número o el correo de alguien cuando le pides a Pallas que le escriba."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche le numéro ou l’e-mail d’une personne lorsque vous demandez à Pallas de lui envoyer un message."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trova il numero o l'email di una persona quando chiedi a Pallas di scriverle."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pallas にメッセージやメールの送信を頼んだときに、相手の電話番号またはメールアドレスを調べます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pallas에 누군가에게 메시지를 보내라고 하면 상대방의 전화번호나 이메일을 찾아요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Busca o telefone ou e-mail de alguém quando você pede ao Pallas para enviar uma mensagem ou e-mail para a pessoa."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Находит номер или адрес почты человека, когда вы просите Pallas написать ему сообщение или письмо."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你让 Pallas 给某人发信息时，查到对方的电话或邮箱。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你請 Pallas 傳訊息給某人時，查詢對方的電話或電子郵件。"
+          }
+        }
+      }
+    },
+    "NSFaceIDUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bestätigt mit Face ID, dass du es bist, bevor Schritte wie Bezahlen oder Senden ausgeführt werden."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirms it's you with Face ID before steps like paying or sending."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirma que eres tú con Face ID antes de pasos como pagar o enviar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirme que c’est bien vous avec Face ID avant des étapes comme un paiement ou un envoi."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conferma che sei tu con Face ID prima di azioni come pagare o inviare."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "支払いや送信などのステップの前に、Face ID で本人確認を行います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "결제나 전송 같은 단계는 Face ID로 본인인지 먼저 확인해요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirma que é você com o Face ID antes de etapas como pagar ou enviar."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перед шагами вроде оплаты или отправки подтверждает, что это вы, с помощью Face ID."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "付款、发送这类步骤，先用面容 ID 确认是你本人。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "付款、傳送這類步驟，會先用 Face ID 確認是你本人。"
+          }
+        }
+      }
+    },
+    "NSLocalNetworkUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Findet Geräte im lokalen Netzwerk, verbindet sich mit ihnen und gibt lokale Dienste auf Wunsch frei."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finds and connects to devices on your local network and shares local services when you ask."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Busca dispositivos en tu red local, se conecta a ellos y comparte servicios de este dispositivo cuando lo solicitas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trouve les appareils sur votre réseau local, s’y connecte et partage les services de cet appareil à votre demande."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trova i dispositivi sulla rete locale, si connette a essi e condivide i servizi di questo dispositivo quando lo chiedi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ローカルネットワーク上の機器を検索して接続し、依頼されたときにこのデバイスのサービスを共有します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로컬 네트워크의 기기를 찾아 연결하고, 요청할 때 이 기기의 서비스를 공유합니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encontra dispositivos na sua rede local, conecta-se a eles e compartilha serviços deste dispositivo quando você solicita."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Находит устройства в локальной сети, подключается к ним и по вашему запросу предоставляет доступ к службам этого устройства."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用来查找和连接局域网设备，并在你请求时共享本机服务。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用來尋找並連接區域網路上的裝置，並在你要求時分享本機服務。"
+          }
+        }
+      }
+    },
+    "NSMicrophoneUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wandelt beim Diktieren deine Stimme in Text um und lässt die andere Person dich hören, wenn du einen KI-Anruf übernimmst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turns your speech into text when you dictate and lets the other person hear you when you take over an AI call."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convierte tu voz en texto al dictar y permite que la otra persona te oiga cuando tomas el control de una llamada de IA."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transcrit votre voix lors de la dictée et permet à votre interlocuteur de vous entendre lorsque vous reprenez un appel de l’IA."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trascrive la voce mentre detti e permette all’altra persona di sentirti quando prendi in carico una chiamata dell’IA."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "音声入力で話した言葉を文字に変換し、AI 通話を引き継いだときに相手にあなたの声を届けます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "음성 입력에서 말을 텍스트로 바꾸고, AI 통화를 인계받으면 상대방이 내 목소리를 들을 수 있게 합니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transforma sua fala em texto ao ditar e permite que a outra pessoa ouça você quando você assume uma chamada de IA."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Преобразует вашу речь в текст при диктовке и позволяет собеседнику слышать вас, когда вы принимаете звонок от ИИ."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "语音输入时将你的话转成文字，接管 AI 电话时让对方听见你。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "語音輸入時將你的話轉成文字，接管 AI 電話時讓對方聽見你。"
+          }
+        }
+      }
+    },
+    "NSPhotoLibraryAddUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sichert Bilder aus Unterhaltungen, die du auswählst, in Fotos."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save conversation images you choose to Photos."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guarda en Fotos las imágenes de conversación que elijas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistre dans Photos les images de conversation que vous choisissez."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salva in Foto le immagini delle conversazioni che scegli."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選択したチャットの画像を“写真”に保存します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택한 대화 이미지를 사진에 저장해요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salva em Fotos as imagens da conversa que você escolher."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сохраняет выбранные вами изображения из разговора в «Фото»."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将你选择的对话图片保存到照片。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "將你選擇的對話圖片儲存到照片。"
+          }
+        }
+      }
+    },
+    "NSRemindersFullAccessUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fügt Aufgaben, die du Pallas nennst, zu Erinnerungen hinzu und kann sie prüfen oder abhaken."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adds the to-dos you ask Pallas for to Reminders, and can check them or mark them done."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añade a Recordatorios las tareas pendientes que le pides a Pallas, y puede consultarlas o marcarlas como hechas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoute à Rappels les tâches que vous demandez à Pallas de noter, et peut les consulter ou les cocher."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiunge a Promemoria le cose da fare che chiedi a Pallas, e può controllarle o segnarle come completate."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ToDo の記録を Pallas に頼んだときに、リマインダーに追加し、確認や完了もできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pallas에 할 일을 기록하라고 하면 미리 알림에 추가하고, 확인하거나 완료 처리도 도와줘요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adiciona aos Lembretes as tarefas que você pede ao Pallas e pode consultá-las ou marcá-las como concluídas."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Добавляет в «Напоминания» дела, о которых вы просите Pallas, а также может проверять их и отмечать выполненными."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你让 Pallas 记待办时，把它加到提醒事项，也能帮你查看和勾掉。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你請 Pallas 記待辦事項時，把它加到提醒事項，也能幫你查看和勾選完成。"
+          }
+        }
+      }
+    },
+    "NSScreenCaptureUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pallas erfasst das für die aktuelle Aufgabe freigegebene Fenster zur Live-Ansicht und Steuerung."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pallas captures the window authorized for the current task to show a live preview and control it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pallas captura la ventana autorizada para la tarea actual para mostrarla en directo y controlarla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pallas capture la fenêtre autorisée pour la tâche en cours afin de l’afficher en direct et de la contrôler."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pallas acquisisce la finestra autorizzata per l’attività corrente per mostrarla in diretta e controllarla."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pallas は、現在のタスクで許可されたウインドウをキャプチャして、ライブプレビューと操作に使用します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pallas는 현재 작업에서 허용된 윈도우를 캡처해 실시간으로 미리 보고 제어합니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Pallas captura a janela autorizada para a tarefa atual para exibi-la ao vivo e controlá-la."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pallas захватывает окно, разрешённое для текущей задачи, для просмотра и управления в реальном времени."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pallas 获取当前任务授权的窗口画面，用于实时预览和操控。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pallas 擷取目前任務授權的視窗畫面，用於即時預覽和操控。"
+          }
+        }
+      }
+    },
+    "NSSpeechRecognitionUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wandelt in Text um, was du sprichst, während du das Mikrofon gedrückt hältst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turns what you say while holding the mic into text."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convierte en texto lo que dices mientras mantienes pulsado el micrófono."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transforme en texte ce que vous dites en maintenant le micro appuyé."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trasforma in testo ciò che dici tenendo premuto il microfono."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "押して話した内容をテキストに変換します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "길게 누르고 말한 내용을 텍스트로 변환해요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transforma em texto o que você diz enquanto segura o microfone."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Превращает сказанное вами при удержании кнопки в текст."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "把你按住说的话转成文字。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "把你按住說的話轉成文字。"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

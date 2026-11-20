@@ -1,0 +1,61 @@
+--- a/node_modules/@deepseek-ai/dsh-agent-preset-registry/lib/index.js
++++ b/node_modules/@deepseek-ai/dsh-agent-preset-registry/lib/index.js
+@@ -469,8 +469,13 @@
+ 		}
+ 		/** Default preset for a subsequently created session. */
+ 		get defaultId() {
+-			return this.config.selectedDefault.get() ?? this.config.default;
++			return this.known(this.config.selectedDefault.get() ?? this.config.default);
+ 		}
++		/** Pallas Agent: the phone has no ptc preset (its code runs need a child Node process,
++		* which iOS does not allow); a default or session that names it runs standard. */
++		known(id) {
++			return id === "ptc" && !this.definitions.has(id) ? "standard" : id;
++		}
+ 		/**
+ 		* Read the preset recorded for a Session, including selections no longer in the roster.
+ 		* @param session - Session whose committed preset selection is read.
+@@ -610,7 +615,7 @@
+ 		* @returns Current metadata, including failure when activation failed.
+ 		*/
+ 		async resolve(id) {
+-			const wanted = id ?? this.defaultId;
++			const wanted = this.known(id ?? this.defaultId);
+ 			const record = this.definitions.get(wanted);
+ 			if (record === void 0) throw new RemoteError("agent-preset/not-found", `Unknown agent preset: ${wanted}`, {
+ 				agentPreset: wanted,
+@@ -627,6 +632,7 @@
+ 		* @returns The declared composition beside its published metadata.
+ 		*/
+ 		readDocument(agentPreset) {
++			agentPreset = this.known(agentPreset);
+ 			const record = this.definitions.get(agentPreset);
+ 			if (record === void 0) return Promise.reject(new RemoteError("agent-preset/not-found", `Unknown agent preset: ${agentPreset}`, {
+ 				agentPreset,
+@@ -646,7 +652,7 @@
+ 			});
+ 		}
+ 		async retain(id) {
+-			const wanted = id ?? this.defaultId;
++			const wanted = this.known(id ?? this.defaultId);
+ 			while (true) {
+ 				const record = this.definitions.get(wanted);
+ 				if (record === void 0) throw new RemoteError("agent-preset/not-found", `Unknown agent preset: ${wanted}`, {
+@@ -764,6 +770,7 @@
+ 		* @returns Committed preset identity.
+ 		*/
+ 		async select(agent, agentPreset) {
++			agentPreset = this.known(agentPreset);
+ 			const turn = (this.switches.get(agent.id) ?? Promise.resolve()).then(async () => {
+ 				const boundary = this.owner.agents.turnBoundaryOf(agent.session);
+ 				if (boundary.openTurnStartSeq !== null || boundary.lastTurn > 0) throw new RemoteError("agent-preset/locked", "This session has already started", {
+--- a/node_modules/@deepseek-ai/dsh-web-app/package.json
++++ b/node_modules/@deepseek-ai/dsh-web-app/package.json
+@@ -48,7 +48,6 @@
+       "patch": [
+         "./cordis.patch.yml",
+         "./presets/standard.patch.yml",
+-        "./presets/ptc.patch.yml",
+         "./presets/minimal.patch.yml",
+         "./presets/cordis.patch.yml"
+       ]

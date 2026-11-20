@@ -1,0 +1,17 @@
+--- a/node_modules/@deepseek-ai/dsh-session-title-first-prompt-llm/lib/index.js	2026-11-12 19:11:28
++++ b/node_modules/@deepseek-ai/dsh-session-title-first-prompt-llm/lib/index.js	2026-11-12 19:11:28
+@@ -99,6 +99,14 @@
+ 		async generate(request) {
+ 			const first = request.messages[0];
+ 			if (first === void 0) throw new Error("first-prompt title provider requires one human message");
++			// dsh local: the phone's own Apple model names the conversation when it can; with no such model, or no usable answer, the chat model does as before.
++			const local = await globalThis[Symbol.for("dsh.ios.appleModel")]?.(systemPrompt(resolved), frameMessages([first]), request.signal).catch(() => void 0);
++			const localTitle = typeof local === "string" ? normalizeSessionTitle(titleFromOutput(local), Number.MAX_SAFE_INTEGER) : "";
++			if (localTitle.length > 0) return {
++				title: localTitle,
++				messageSeqs: [first.seq],
++				model: { provider: "apple", model: "on-device" }
++			};
+ 			const response = await executeSessionTitleLlm(ctx, resolved, request, titleProvider, {
+ 				system: systemPrompt(resolved),
+ 				input: frameMessages([first]),

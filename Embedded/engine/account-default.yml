@@ -1,0 +1,36 @@
+- id: agent-default-model
+  config:
+    provider: deepseek-account
+    model: deepseek-flash
+# The stock web profile tells the model it is in a browser GUI and points it at the engine checkout;
+# on the phone the person is in Pallas Agent (prompts/surface.cjs). start.cjs adds this row once.
+- id: harness-dev-context
+  disabled: true
+# The stock web profile opens the system prompt with "You are a coding agent"; on the phone the model
+# is the owner's assistant (prompts/persona.cjs, which start.cjs hands over in DSH_IOS_PERSONA, so a
+# changed persona reaches every profile). start.cjs adds this row to older profiles once.
+- id: system-prompt
+  config:
+    includeHarnessIdentity: false
+    personaPrefix: !!js "process.env.DSH_IOS_PERSONA"
+# The DeepSeek API path would attach the conversation's log to each request; off on the phone for
+# good (the row is disabled, so no setting can turn it back on). start.cjs adds this to older profiles.
+- id: session-log-deepseek
+  disabled: true
+# Web search follows the conversation's model instead of always going through DeepSeek
+# (web-search.cjs). start.cjs points older profiles at it once.
+- id: web
+  config:
+    searchProvider: pallas-web-search
+    fetchProvider: http
+# History search: the full-text index lives in the engine home, and the model reads earlier
+# conversations with session_search. start.cjs adds these rows to older profiles once.
+- id: session-query-sqlite
+  config:
+    path: !!js "process.env.DSH_HOME + '/search/sessions.sqlite'"
+    openAt: first-search
+- insert:
+    - id: ios-tool-session-query
+      name: '@deepseek-ai/dsh-tool-session-query'
+      config:
+        searchTimeoutMs: 120000

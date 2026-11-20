@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "patches": {
+    "defer-optional-install-modules.diff": {
+      "11.19.1": {
+        "node_modules/@npmcli/arborist/lib/node.js": {
+          "before": "2df02801c449ad50bbf1196b82c0fd7ae61039bfc612ba7269b960a252c33269",
+          "after": "2674dc3a680f8b20d8689d78a7b15de80aa81532cb8d2bc7977909eac993ebf9"
+        },
+        "node_modules/npm-registry-fetch/lib/index.js": {
+          "before": "9757d6aa767884be9e566ebfeaca76c94d80bbea854b41a42ce8648feb2fca42",
+          "after": "34c8b653436cd1700bbe956660cb94a7e4f30f6b4c9cad0f68e94774bc6195bc"
+        },
+        "node_modules/pacote/lib/registry.js": {
+          "before": "306ffe4b4176c78c1118f09ee594616e843b7d708780dba930a82965a56c3d31",
+          "after": "46452d059d59458b314b4b5902a0c94f795a0c7db79199218d4997918792a883"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,250 @@
+diff -ru a/node_modules/@deepseek-ai/dsh-app-boot/lib/index.js b/node_modules/@deepseek-ai/dsh-app-boot/lib/index.js
+--- a/node_modules/@deepseek-ai/dsh-app-boot/lib/index.js	2026-11-15 22:45:21
++++ b/node_modules/@deepseek-ai/dsh-app-boot/lib/index.js	2026-11-15 22:45:21
+@@ -1,6 +1,6 @@
+ import { createRequire, isBuiltin } from "node:module";
+ import { fileURLToPath, pathToFileURL } from "node:url";
+-import fs, { existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, readlinkSync, realpathSync, renameSync, rmSync, statSync, unlinkSync, writeFileSync } from "node:fs";
++import fs, { existsSync as fsExistsSync, lstatSync, mkdirSync, readFileSync as fsReadFileSync, readdirSync, readlinkSync, realpathSync as fsRealpathSync, renameSync, rmSync, statSync, unlinkSync, writeFileSync } from "node:fs";
+ import { inspect, parseEnv } from "node:util";
+ import { Context, Service } from "@deepseek-ai/cordis";
+ import { basename, dirname, extname, isAbsolute, join, relative, resolve, sep, win32 } from "node:path";
+@@ -17,6 +17,116 @@
+ import { withFileLock, writeFileAtomic } from "@deepseek-ai/dsh-atomic-write";
+ import { getEnvironmentData, setEnvironmentData } from "node:worker_threads";
+ import { imports } from "resolve.exports";
++//#region dsh local: read-only app bundle
++// The app bundle cannot change while it is installed, so what boot learns about files inside it (real
++// paths, existence, package manifests) is asked once per run and kept for the next start in a file
++// named after the bundle's identity. Paths outside the bundle (profiles, home) are always asked.
++const immutableRoots = (process.env.DSH_IOS_IMMUTABLE_ROOT ?? "").split(":").filter((root) => root !== "").map((root) => root.endsWith(sep) ? root : root + sep);
++const bootFactsFile = immutableRoots.length === 0 ? void 0 : process.env.DSH_IOS_BOOT_FACTS;
++const bootFacts = { key: void 0, real: new Map(), native: new Map(), exists: new Map(), scopes: new Map(), used: new Set(), changed: false };
++function immutablePath(path) {
++	return typeof path === "string" && immutableRoots.some((root) => path.startsWith(root));
++}
++/** Saved paths are relative to the bundle (`@…`), and a real path equal to its query is saved as `1`. */
++function shortPath(path) {
++	return typeof path === "string" && path.startsWith(immutableRoots[0]) ? "@" + path.slice(immutableRoots[0].length) : path;
++}
++function longPath(path) {
++	return typeof path === "string" && path.startsWith("@") ? immutableRoots[0] + path.slice(1) : path;
++}
++const pathFacts = ["real", "native", "exists"];
++function encodeBootFacts() {
++	const out = { key: bootFacts.key };
++	const used = (name) => ([key]) => bootFacts.used.has(name + "\0" + key);
++	for (const name of pathFacts) out[name] = [...bootFacts[name]].filter(used(name)).map(([path, fact]) => [shortPath(path), fact === path ? 1 : typeof fact === "string" ? shortPath(fact) : fact]);
++	out.scopes = [...bootFacts.scopes].filter(used("scopes")).map(([key, scope]) => [key, {
++		dirs: scope.dirs.map(([name, dir]) => [name, shortPath(dir)]),
++		declarers: scope.declarers.map(([name, anchor]) => [name, shortPath(anchor)]),
++		versions: scope.versions
++	}]);
++	return JSON.stringify(out);
++}
++function decodeBootFacts(saved) {
++	for (const name of pathFacts) bootFacts[name] = new Map(saved[name].map(([short, fact]) => {
++		const path = longPath(short);
++		return [path, fact === 1 ? path : typeof fact === "string" ? longPath(fact) : fact];
++	}));
++	bootFacts.scopes = new Map(saved.scopes.map(([key, scope]) => [key, {
++		dirs: scope.dirs.map(([name, dir]) => [name, longPath(dir)]),
++		declarers: scope.declarers.map(([name, anchor]) => [name, longPath(anchor)]),
++		versions: scope.versions
++	}]));
++}
++function bootFactsKey() {
++	const root = statSync(immutableRoots[0]);
++	return JSON.stringify([immutableRoots, root.ino, root.mtimeMs, root.birthtimeMs]);
++}
++if (bootFactsFile !== void 0) try {
++	bootFacts.key = bootFactsKey();
++	const saved = JSON.parse(fsReadFileSync(bootFactsFile, "utf8"));
++	if (saved.key === bootFacts.key) decodeBootFacts(saved);
++} catch {}
++let bootFactsTimer;
++/** Records that boot asked this fact; the file keeps only facts some start asked, so it shrinks to what boot needs. */
++function bootFactUsed(name, key, learned) {
++	bootFacts.used.add(name + "\0" + key);
++	if (learned) bootFacts.changed = true;
++	if (bootFactsFile === void 0 || bootFacts.key === void 0 || bootFactsTimer !== void 0) return;
++	// Written once boot has settled, so one start records what the next one asks.
++	bootFactsTimer = setTimeout(() => {
++		const stored = pathFacts.reduce((sum, name) => sum + bootFacts[name].size, bootFacts.scopes.size);
++		if (!bootFacts.changed && bootFacts.used.size >= stored) return;
++		bootFacts.changed = false;
++		try {
++			const text = encodeBootFacts();
++			writeFileSync(bootFactsFile + ".tmp", text, { mode: 384 });
++			renameSync(bootFactsFile + ".tmp", bootFactsFile);
++		} catch {}
++	}, 8e3);
++	bootFactsTimer.unref?.();
++}
++/** A path fact under the bundle: a missing path is remembered as missing, not retried. */
++function rememberedPath(name, facts, original) {
++	return function(path, options) {
++		if (options !== void 0 || !immutablePath(path)) return original.apply(this, arguments);
++		let fact = facts.get(path);
++		if (fact === void 0) {
++			try {
++				fact = original.call(this, path);
++			} catch (error) {
++				if (error?.code !== "ENOENT" && error?.code !== "ENOTDIR") throw error;
++				fact = null;
++			}
++			facts.set(path, fact);
++			bootFactUsed(name, path, true);
++		} else bootFactUsed(name, path, false);
++		if (fact === null) throw Object.assign(new Error(`ENOENT: no such file or directory, realpath '${path}'`), { code: "ENOENT", errno: -2, syscall: "realpath", path });
++		return fact;
++	};
++}
++const realpathSync = Object.assign(rememberedPath("real", bootFacts.real, fsRealpathSync), { native: rememberedPath("native", bootFacts.native, fsRealpathSync.native) });
++function existsSync(path) {
++	if (!immutablePath(path)) return fsExistsSync(path);
++	let fact = bootFacts.exists.get(path);
++	if (fact === void 0) {
++		fact = fsExistsSync(path);
++		bootFacts.exists.set(path, fact);
++		bootFactUsed("exists", path, true);
++	} else bootFactUsed("exists", path, false);
++	return fact;
++}
++const manifestTexts = /* @__PURE__ */ new Map();
++/** Package manifests under the bundle are read once per run; anything else goes to the disk. */
++function readFileSync(path, options) {
++	if (!(options === "utf8" && immutablePath(path) && path.endsWith(".json"))) return fsReadFileSync(path, options);
++	let text = manifestTexts.get(path);
++	if (text === void 0) {
++		text = fsReadFileSync(path, options);
++		manifestTexts.set(path, text);
++	}
++	return text;
++}
++//#endregion
+ //#region lib/types/startup-diagnostics.js
+ /** Configuration-free snapshots captured before a failed startup disposes its plugins. */
+ function stateName(state) {
+@@ -1088,7 +1198,7 @@
+ */
+ function getDshRuntimeVersion() {
+ 	const filename = fileURLToPath(new URL("../package.json", import.meta.url));
+-	const manifest = objectOf$1(JSON.parse(fs.readFileSync(filename, "utf8")), "app-boot package.json");
++	const manifest = objectOf$1(JSON.parse(readFileSync(filename, "utf8")), "app-boot package.json");
+ 	return runtimeVersionOf(Object.hasOwn(manifest, "version") ? manifest.version : void 0);
+ }
+ function satisfies(runtimeVersion, range) {
+@@ -1491,8 +1601,24 @@
+ 		...Object.keys(manifest.optionalDependencies ?? {})
+ 	];
+ }
+-/** Resolve the installation packages that the runtime resolver supplies to every profile. */
++/** dsh local: the installation scope depends only on the bundle and the skipped bundles; keep it across starts. */
+ function collectInstallationScopePackages(installAnchor, skippedBundles) {
++	if (bootFacts.key === void 0 || !immutablePath(installAnchor)) return walkInstallationScopePackages(installAnchor, skippedBundles);
++	const key = JSON.stringify([installAnchor, [...skippedBundles].sort()]);
++	const saved = bootFacts.scopes.get(key);
++	bootFactUsed("scopes", key, saved === void 0);
++	if (saved !== void 0) return {
++		packageNames: new Set(saved.dirs.map(([name]) => name)),
++		packageDirs: new Map(saved.dirs),
++		declarers: new Map(saved.declarers),
++		versions: new Map(saved.versions)
++	};
++	const scope = walkInstallationScopePackages(installAnchor, skippedBundles);
++	bootFacts.scopes.set(key, { dirs: [...scope.packageDirs], declarers: [...scope.declarers], versions: [...scope.versions] });
++	return scope;
++}
++/** Resolve the installation packages that the runtime resolver supplies to every profile. */
++function walkInstallationScopePackages(installAnchor, skippedBundles) {
+ 	const canonicalAnchor = join(realModuleDirectory(dirname(installAnchor)), basename(installAnchor));
+ 	const appManifest = readPackageManifest(canonicalAnchor);
+ 	const links = /* @__PURE__ */ new Map();
+diff -ru a/node_modules/@deepseek-ai/dsh-session-persistence-jsonl/lib/index.js b/node_modules/@deepseek-ai/dsh-session-persistence-jsonl/lib/index.js
+--- a/node_modules/@deepseek-ai/dsh-session-persistence-jsonl/lib/index.js	2026-11-15 22:45:21
++++ b/node_modules/@deepseek-ai/dsh-session-persistence-jsonl/lib/index.js	2026-11-15 22:45:21
+@@ -1,7 +1,7 @@
+ import { createDeletionSeam } from "./dsh-local-deletion.mjs";
+ import z from "@deepseek-ai/schemastery";
+ import { SessionFormatUnsupportedMigrationError, createSessionFormatCatalogWithChildren, historicalSessionFormatCatalog, sessionFormatCatalog } from "@deepseek-ai/dsh-session-format-catalog";
+-import { readdirSync } from "node:fs";
++import { readFileSync as dshLocalReadFileSync, readdirSync, renameSync as dshLocalRenameSync, writeFileSync as dshLocalWriteFileSync } from "node:fs";
+ import { link, lstat, mkdir, mkdtemp, open, readFile, readdir, realpath, rm, stat, truncate } from "node:fs/promises";
+ import { basename, dirname, isAbsolute, join, parse, resolve, toNamespacedPath } from "node:path";
+ import { performance } from "node:perf_hooks";
+@@ -3557,6 +3557,10 @@
+ 		return this.rootEncodingCheck;
+ 	}
+ 	async checkRootEncoding() {
++		// dsh local: only the phone's own engine writes this root, always zstd. Proving that by reading
++		// every session directory took a third of a second per 800 sessions at each start; opening a
++		// session still rejects a log in the other encoding (rejectOppositeArtifact).
++		if (process.env.DSH_IOS_SINGLE_ENCODING === "1") return;
+ 		await this.mapSessionDirectories(async (dir) => {
+ 			const incompatible = await this.findOppositeGenerationInDirectory(dir);
+ 			if (incompatible !== void 0) throw this.encodingMismatch(incompatible);
+@@ -3665,6 +3669,63 @@
+ 		if (found !== void 0) this.dshLocalProjects.set(encoded, dirname(dirname(found.sourcePath)));
+ 		return found;
+ 	};
++}
++/**
++* dsh local: every start lists all stored sessions (the workspace registry rebuilds its header index),
++* and listing read, decompressed and validated the first line of every log. A log's header changes
++* only when the file is rewritten, so a listing reuses the header it read before while the file's
++* identity (inode, size, modification and change times) is the same. Appending to a log changes its
++* size, so only logs written since the last start are read again. The headers persist in Caches.
++*/
++{
++	const file = process.env.DSH_IOS_SESSION_HEADERS;
++	if (file !== void 0) {
++		let headers;
++		let changed = false;
++		let timer;
++		const known = () => {
++			if (headers !== void 0) return headers;
++			try {
++				headers = new Map(JSON.parse(dshLocalReadFileSync(file, "utf8")));
++			} catch {
++				headers = /* @__PURE__ */ new Map();
++			}
++			return headers;
++		};
++		const remember = (path, identity, metadata) => {
++			known().set(path, [identity, metadata ?? null]);
++			changed = true;
++			if (timer !== void 0) return;
++			timer = setTimeout(() => {
++				timer = void 0;
++				if (!changed) return;
++				changed = false;
++				try {
++					dshLocalWriteFileSync(file + ".tmp", JSON.stringify([...known()]), { mode: 384 });
++					dshLocalRenameSync(file + ".tmp", file);
++				} catch {}
++			}, 5e3);
++			timer.unref?.();
++		};
++		const readGenerationHeader = JsonlSessionPersistence.prototype.readGenerationHeader;
++		JsonlSessionPersistence.prototype.readGenerationHeader = async function(selected, expectedId, signal) {
++			// Only the listing's reads (no expected id) are remembered; opening a session reads the file.
++			if (expectedId !== void 0) return readGenerationHeader.call(this, selected, expectedId, signal);
++			let identity;
++			try {
++				const found = await stat(selected.sourcePath, { bigint: true });
++				identity = [found.ino, found.size, found.mtimeNs, found.ctimeNs].join(":");
++			} catch {
++				return readGenerationHeader.call(this, selected, expectedId, signal);
++			}
++			const entry = known().get(selected.sourcePath);
++			if (entry !== void 0 && entry[0] === identity) return entry[1] === null ? void 0 : structuredClone(entry[1]);
++			// A refusal (unsupported or corrupt log) is not remembered: it is thrown again next time.
++			const metadata = await readGenerationHeader.call(this, selected, expectedId, signal);
++			remember(selected.sourcePath, identity, metadata);
++			return metadata;
++		};
++	}
+ }
+ const name = "session-persistence-jsonl";
+ /** Loader schema for the backend's root, physical encoding, and listing concurrency. */

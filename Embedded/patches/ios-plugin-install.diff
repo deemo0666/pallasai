@@ -1,0 +1,48 @@
+--- a/node_modules/@deepseek-ai/dsh-plugin-manager/lib/index.js
++++ b/node_modules/@deepseek-ai/dsh-plugin-manager/lib/index.js
+@@ -2738,7 +2738,13 @@
+ 				const files = await this.readRestoredFiles();
+ 				let name;
+ 				let version;
++				let undoLocalInstall;
+ 				try {
++					const local = globalThis[Symbol.for("dsh.ios.localPlugins")];
++					if (local) {
++						if (!isAbsolute(spec)) throw new Error("本机引擎支持导入已构建的插件目录；在线安装需要主机具备 pnpm。");
++						undoLocalInstall = local.add(this.profile.dir, spec);
++					} else {
+ 					result.registries = [];
+ 					const parsed = parsedForRegistry(spec);
+ 					const signal = AbortSignal.any([this.abort.signal, control.abort.signal]);
+@@ -2828,6 +2834,7 @@
+ 						}
+ 						throw new Error(run.output);
+ 					}
++					}
+ 					const after = readProfileManifest("dsh", this.profile.dir).dependencies ?? {};
+ 					const installed = Object.keys(after).filter((name) => before[name] !== after[name]);
+ 					if (installed.length === 0) {
+@@ -2844,9 +2851,10 @@
+ 					if (compatibility !== void 0 && !compatibility.exempted) throw new ManagementFailure("incompatible-version", [incompatiblePlugin(compatibility)]);
+ 					for (const file of bundlePatchPaths(dir, manifest.dsh.bundle)) loadOverlayPatches("dsh", file);
+ 					version = manifest.version;
+-					this.installedFrom.set(name, used);
++					if (!local) this.installedFrom.set(name, result.registries.at(-1));
+ 				} catch (error) {
+ 					await this.restoreFiles(files);
++					undoLocalInstall?.();
+ 					throw error;
+ 				}
+ 				control.phase = "applying";
+@@ -2971,6 +2979,11 @@
+ 		/** Run one pnpm command in the profile, streaming its output as install-log chunks. */
+ 		async runPnpm(args, signal, requestId) {
+ 			const jobId = randomUUID();
++			const local = globalThis[Symbol.for("dsh.ios.localPlugins")];
++			if (local && args[0] === "remove") {
++				local.remove(this.profile.dir, args[1]);
++				return {exitCode: 0, output: ""};
++			}
+ 			const argv = ["pnpm", ...args];
+ 			const cwd = this.profile.dir;
+ 			const identity = requestId === void 0 ? {} : { requestId };

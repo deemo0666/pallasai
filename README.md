@@ -115,16 +115,44 @@ The phone can switch to a computer running DeepSeek Harness at any time, or hand
 
 </details>
 
+## Pallas Core: build it yourself
+
+This repository holds the source of **Pallas Core**, the open part of Pallas Agent, under the Apache License 2.0. Core is a complete app: chat with streaming and reasoning, the on-device engine (without the Linux machine, so without bash), remote hosts over `dsh web` and SSH, your own API keys and any OpenAI-compatible endpoint, ChatGPT and DeepSeek sign-in, plugins and skills, memory, scheduled tasks, calendar, reminders, contacts and mail connectors, handing tasks to a paired computer, sharing and replay, widgets and Shortcuts.
+
+The TestFlight app adds what Core leaves out: the Linux machine (bash, Python, npm), phone control, AI phone calls, activity review, device-to-device link, embedded Tailscale and Claude subscription sign-in.
+
+| | Pallas Core (this source) | Pallas Agent (TestFlight) |
+| --- | --- | --- |
+| Chat, models, plugins, skills, memory | ✓ | ✓ |
+| On-device engine | ✓ | ✓ |
+| Remote hosts, hand tasks to a computer | ✓ | ✓ |
+| Linux machine (bash, Python, npm) | | ✓ |
+| Phone control, AI phone calls, activity review | | ✓ |
+| Device-to-device link, embedded Tailscale | | ✓ |
+
+**Requirements:** a Mac with Xcode 27, [XcodeGen](https://github.com/yonaskolb/XcodeGen), and for the on-device engine also Node.js, npm and Rust (`rustup target add aarch64-apple-ios`).
+
+```sh
+xcodegen generate
+# The on-device engine (optional: without it the app works with remote hosts only)
+python3 Embedded/build.py
+open PallasCore.xcodeproj
+```
+
+Set `PALLAS_CORE_BUNDLE_ID` and `DEVELOPMENT_TEAM` in `project.yml` to your own before running on a device. The iOS Simulator has no on-device engine.
+
+This source is exported from the app's single codebase on every release, so issues and pull requests are welcome here.
+
 ## Feedback
 
 Questions and suggestions are welcome in [Issues](../../issues).
 
 ## Copyright and license
 
-Copyright © 2026 deemo0666. All rights reserved.
+Copyright © 2026 deemo0666.
 
-This repository hosts release notes and the beta entry point; it does not contain the app's source code. No open-source license is granted for Pallas Agent, its name and logo, the Pallas cat artwork, or the videos and images in this repository. See [LICENSE](LICENSE).
+The source code in this repository is licensed under the [Apache License 2.0](LICENSE). The names "Pallas", "Pallas Agent" and "Pallas Core", the app icons and logo, the Pallas cat artwork, and the videos and images in `assets/` are not licensed under it; see [NOTICE](NOTICE). You may use them only to refer or link to this project. Builds you distribute need a name and icon of their own.
 
-Third-party components bundled in the app, including DeepSeek Harness, NodeMobile, QEMU, the Linux kernel, Citadel and SwiftTerm, keep their own licenses; their notices are under **Settings › About** in the app. The source code for the bundled QEMU and Linux guest is published in [Pallas VM](https://github.com/deemo0666/pallas-vm).
+Third-party components keep their own licenses: see `App/ThirdPartyLicenses.txt`, and in the app **Settings › About**. The source code for the QEMU and Linux guest in the TestFlight app is published in [Pallas VM](https://github.com/deemo0666/pallas-vm).
 
 Pallas Agent is an independent project and is not affiliated with DeepSeek.

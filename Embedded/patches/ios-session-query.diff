@@ -1,0 +1,297 @@
+--- a/node_modules/@deepseek-ai/dsh-tool-session-query/lib/index.js
++++ b/node_modules/@deepseek-ai/dsh-tool-session-query/lib/index.js
+@@ -441,6 +441,27 @@
+ *
+ * @module @deepseek-ai/dsh-tool-session-query/workspace-access
+ */
++// dsh local: the iPhone's container path changes with every install and update, so the cwd a
++// session recorded does not name its workspace; every session on the phone belongs to one person.
++const DSH_LOCAL_ANY_CWD = process.platform === "ios";
++function cwdClauses(cwd) {
++	return DSH_LOCAL_ANY_CWD ? [] : [{
++		kind: "cwd",
++		values: [cwd]
++	}];
++}
++// dsh local: models with strict function schemas fill every optional field with "", [] or 0, which
++// these tools read as filters that match nothing (or reject). Such blanks mean "not given".
++function dshLocalArgs(args) {
++	const kept = {};
++	for (const [key, value] of Object.entries(args ?? {})) {
++		if (typeof value === "string" && value.trim() === "") continue;
++		if (Array.isArray(value) && value.every((item) => typeof item === "string" && item.trim() === "")) continue;
++		if (value === 0 && ["event_seq_from", "event_seq_to", "before", "after"].includes(key)) continue;
++		kept[key] = Array.isArray(value) ? value.filter((item) => !(typeof item === "string" && item.trim() === "")) : value;
++	}
++	return kept;
++}
+ function callerOf(exec, ctx) {
+ 	const agent = exec.agent;
+ 	if (agent === void 0) throw new HarnessError("session query tools require an agent-bound caller", "SESSION_QUERY_TOOL_MISSING_AGENT");
+@@ -460,15 +481,13 @@
+ 	if ((await serviceBoundary.call(ctx, signal, "target authorization", () => ctx.sessionQuery.filterSessions([{
+ 		kind: "id",
+ 		values: [target]
+-	}, {
+-		kind: "cwd",
+-		values: [cwd]
+-	}], signal))).length !== 1) throw serviceBoundary.unauthorizedTarget();
++	}, ...cwdClauses(cwd)], signal))).length !== 1) throw serviceBoundary.unauthorizedTarget();
+ }
+ function recordAuthorized(record, caller) {
+ 	return headerAuthorized(record.header, caller);
+ }
+ function headerAuthorized(header, caller) {
++	if (DSH_LOCAL_ANY_CWD) return true;
+ 	if (header.id === caller.id) return header.cwd === caller.header.cwd;
+ 	return caller.header.cwd !== void 0 && header.cwd === caller.header.cwd;
+ }
+@@ -485,10 +504,7 @@
+ 	const records = await serviceBoundary.call(ctx, signal, "session-id authorization", () => ctx.sessionQuery.filterSessions([{
+ 		kind: "id",
+ 		values: other
+-	}, {
+-		kind: "cwd",
+-		values: [cwd]
+-	}], signal));
++	}, ...cwdClauses(cwd)], signal));
+ 	const requested = new Set(other);
+ 	for (const record of records) if (requested.has(record.header.id) && recordAuthorized(record, caller)) authorized.add(record.header.id);
+ 	return authorized;
+@@ -770,10 +786,7 @@
+ 			values: parentValues
+ 		});
+ 	}
+-	sessionFilters.push({
+-		kind: "cwd",
+-		values: [cwd]
+-	});
++	sessionFilters.push(...cwdClauses(cwd));
+ 	const collected = await collectPages(maxResults, exec.signal, (cursor) => serviceBoundary.call(ctx, exec.signal, "session search", () => ctx.sessionQuery.searchSessions({
+ 		query,
+ 		sessionFilters,
+@@ -942,7 +955,7 @@
+ 		text: value
+ 	}]
+ };
+-const PROMPT_TEXT = "Use session_search to find relevant work from prior sessions, or session_event_search to search earlier events in one session. Search results are cursor-free and workspace-scoped. Follow a useful hit with session_trace, session_event_trace, or session_event_read when you need lineage, relationships, or exact data.";
++const PROMPT_TEXT = DSH_LOCAL_ANY_CWD ? "Use session_search to find what was said in earlier conversations on this phone. Follow a useful hit with session_event_read when you need the exact message." : "Use session_search to find relevant work from prior sessions, or session_event_search to search earlier events in one session. Search results are cursor-free and workspace-scoped. Follow a useful hit with session_trace, session_event_trace, or session_event_read when you need lineage, relationships, or exact data.";
+ /** Register all five tools and their shared model guidance. */
+ function apply(ctx, config) {
+ 	const resolved = resolveConfig(config);
+@@ -957,28 +970,34 @@
+ 		parameters: toolInput.sessionSearchParameters,
+ 		output: TEXT_OUTPUT,
+ 		timeoutMs: resolved.searchTimeoutMs,
+-		execute: (args, exec) => operations.executeSessionSearch(ctx, args, exec, resolved.maxSearchResults),
++		execute: (args, exec) => operations.executeSessionSearch(ctx, dshLocalArgs(args), exec, resolved.maxSearchResults),
+ 		presentCall: presentation.presentSessionSearchCall
+ 	}));
+-	ctx.tools.register(defineTool({
++	// dsh local: on the phone the model gets session_search and session_event_read only; the other
++	// three cost a schema in every request and a step whenever the model reaches for them.
++	if (!DSH_LOCAL_ANY_CWD) ctx.tools.register(defineTool({
+ 		name: "session_event_search",
+ 		description: "Search prior events in one authorized session; the current session excludes the step performing this call.",
+ 		parameters: toolInput.eventSearchParameters,
+ 		output: TEXT_OUTPUT,
+ 		timeoutMs: resolved.searchTimeoutMs,
+-		execute: (args, exec) => operations.executeEventSearch(ctx, args, exec, resolved.maxSearchResults),
++		execute: (args, exec) => operations.executeEventSearch(ctx, dshLocalArgs(args), exec, resolved.maxSearchResults),
+ 		presentCall: presentation.presentEventSearchCall
+ 	}));
+-	ctx.tools.register(defineTool({
++	// dsh local: on the phone the model gets session_search and session_event_read only; the other
++	// three cost a schema in every request and a step whenever the model reaches for them.
++	if (!DSH_LOCAL_ANY_CWD) ctx.tools.register(defineTool({
+ 		name: "session_trace",
+ 		description: "Read the authorized session lineage around one session, including complete visible ancestor and descendant relationships.",
+ 		parameters: toolInput.targetSessionParameter,
+ 		output: TEXT_OUTPUT,
+ 		isConcurrencySafe: () => true,
+-		execute: (args, exec) => operations.executeSessionTrace(ctx, args, exec),
++		execute: (args, exec) => operations.executeSessionTrace(ctx, dshLocalArgs(args), exec),
+ 		presentCall: presentation.presentSessionTraceCall
+ 	}));
+-	ctx.tools.register(defineTool({
++	// dsh local: on the phone the model gets session_search and session_event_read only; the other
++	// three cost a schema in every request and a step whenever the model reaches for them.
++	if (!DSH_LOCAL_ANY_CWD) ctx.tools.register(defineTool({
+ 		name: "session_event_trace",
+ 		description: "Read every direct replacement and relationship to a cited source event for one event in an authorized session.",
+ 		parameters: {
+@@ -991,7 +1010,7 @@
+ 		},
+ 		output: TEXT_OUTPUT,
+ 		isConcurrencySafe: () => true,
+-		execute: (args, exec) => operations.executeEventTrace(ctx, args, exec),
++		execute: (args, exec) => operations.executeEventTrace(ctx, dshLocalArgs(args), exec),
+ 		presentCall: (args) => presentation.presentEventTargetCall("Trace event", args)
+ 	}));
+ 	ctx.tools.register(defineTool({
+@@ -1015,7 +1034,7 @@
+ 		},
+ 		output: TEXT_OUTPUT,
+ 		isConcurrencySafe: () => true,
+-		execute: (args, exec) => operations.executeEventRead(ctx, args, exec),
++		execute: (args, exec) => operations.executeEventRead(ctx, dshLocalArgs(args), exec),
+ 		presentCall: (args) => presentation.presentEventTargetCall("Read event", args)
+ 	}));
+ }
+--- a/node_modules/@deepseek-ai/dsh-session-query-sqlite/lib/index.js
++++ b/node_modules/@deepseek-ai/dsh-session-query-sqlite/lib/index.js
+@@ -292,8 +292,13 @@
+ * @param text - extracted document text or normalized caller query.
+ * @returns text with reserved noncharacters mapped to replacement characters.
+ */
++// dsh local: unicode61 keeps a run of Chinese characters as one token, so 「西湖」 never matched a
++// sentence that contains it. Every CJK character becomes a token of its own, in documents and in
++// queries alike; the phrase a query is wrapped in then matches those characters side by side.
++const DSH_LOCAL_CJK = /([\u2E80-\u2FDF\u3040-\u30FF\u3100-\u312F\u3190-\u31FF\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]|[\u{20000}-\u{2FA1F}])/gu;
++const DSH_LOCAL_CJK_ONE = /^(?:[\u2E80-\u2FDF\u3040-\u30FF\u3100-\u312F\u3190-\u31FF\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]|[\u{20000}-\u{2FA1F}])$/u;
+ function sanitizeFtsText(text) {
+-	return text.replaceAll("\0", "�").replaceAll("﷐", "�").replaceAll("﷑", "�");
++	return text.replaceAll("\0", "�").replaceAll("﷐", "�").replaceAll("﷑", "�").replace(DSH_LOCAL_CJK, " $1 ");
+ }
+ /**
+ * Build the stable normalized request identity stored in opaque cursors.
+@@ -357,7 +362,13 @@
+ 		if (character === "﷑") continue;
+ 		if (/\s/u.test(character)) {
+ 			if (characters.length > 0 && characters.at(-1) !== " ") characters.push(" ");
+-		} else characters.push(character);
++		} else {
++			if (characters.at(-1) === " " && DSH_LOCAL_CJK_ONE.test(character) && DSH_LOCAL_CJK_ONE.test(characters.at(-2) ?? "")) {
++				characters.pop();
++				if (matchStart !== void 0 && matchStart > characters.length) matchStart = characters.length;
++			}
++			characters.push(character);
++		}
+ 	}
+ 	if (characters.at(-1) === " ") characters.pop();
+ 	return {
+@@ -724,13 +735,18 @@
+ 					const loaded = await readColdSessionLog(persistence, entry.header.id, signal);
+ 					assertNotAborted(signal);
+ 					assertSessionHeadersCompatible(entry.header, loaded.header);
+-					entry.loaded = observeSession(loaded.header, loaded.inheritedEventCount, loaded.events);
++					entry.loaded = dshLocalObserveCold(loaded.header, loaded.inheritedEventCount, loaded.events);
+ 				}
+ 				assertNotAborted(signal);
+ 				const afterSnapshots = await persistence.list(listOptions);
+ 				assertNotAborted(signal);
+ 				const after = materializePersistenceSnapshots(afterSnapshots);
+-				if (!samePersistenceSnapshots(persisted, after)) continue;
++				// dsh local: a running conversation appends to its log while the index is read (the one
++				// calling session_search always does); it is read from memory, not from that log, so
++				// its changing revision must not send the whole observation round again and, on the
++				// second time, fail the search.
++				const dshLocalLive = new Set([...initiallyLive, ...this.ctx.sessions.list().map((session) => session.id)]);
++				if (!samePersistenceSnapshots(persisted, after, dshLocalLive)) continue;
+ 				if (this._persistenceBinding !== persistenceBinding) continue;
+ 			} catch (error) {
+ 				if (isAbort(error) || signal?.aborted) throw new SessionQueryError("session-search aborted", "SESSION_QUERY_ABORTED", { cause: error });
+@@ -1008,6 +1024,18 @@
+ 		})).digest("base64url")
+ 	};
+ }
++/**
++* dsh local: a log read from disk is indexed by its file revision. Its documents need no defensive
++* copy (the events come back frozen and are only read) and no fingerprint, which only a live
++* session's row keeps; both took a seventh of a full build on the phone.
++*/
++function dshLocalObserveCold(header, inheritedEventCount, events) {
++	return {
++		header: structuredClone(header),
++		inheritedEventCount,
++		documents: buildSessionEventSearchDocuments(header.id, events)
++	};
++}
+ function materializePersistenceSnapshots(snapshots) {
+ 	if (!isRuntimeArray(snapshots)) throw new Error("persistence snapshots must be an array");
+ 	const result = /* @__PURE__ */ new Map();
+@@ -1022,9 +1050,10 @@
+ 	}
+ 	return result;
+ }
+-function samePersistenceSnapshots(before, after) {
+-	if (before.size !== after.size) return false;
++function samePersistenceSnapshots(before, after, live = /* @__PURE__ */ new Set()) {
++	if ([...before.keys()].filter((id) => !live.has(id)).length !== [...after.keys()].filter((id) => !live.has(id)).length) return false;
+ 	for (const [id, first] of before) {
++		if (live.has(id)) continue;
+ 		const second = after.get(id);
+ 		if (second === void 0 || first.revision !== second.revision || !sameHeader(first.header, second.header)) return false;
+ 	}
+--- a/node_modules/@deepseek-ai/dsh-session-query/lib/index.js
++++ b/node_modules/@deepseek-ai/dsh-session-query/lib/index.js
+@@ -542,7 +542,19 @@
+ * @param event - event to inspect.
+ * @returns newline-joined semantic text, or an empty string when non-searchable.
+ */
++// dsh local: on the phone the history index holds what was said, not what tools printed. Tool output
++// was more than half of its text and the context the harness injects into every turn (working
++// directory, skill catalog, time) another sixth; the person's own words were 1.5%. Tool calls stay
++// (once: the assistant message repeats them), errors stay, and session_event_read still returns
++// any event in full.
++const DSH_LOCAL_SAID_ONLY = process.platform === "ios";
++const DSH_LOCAL_INJECTED = new Set(["runtime-context", "skill-catalog", "time-context", "repeat-tool-reminder", "tool-jobs", "model-selection", "user-approval", "subagent-settled"]);
+ function extractSessionEventText(event) {
++	if (DSH_LOCAL_SAID_ONLY) switch (event.type) {
++		case "user/message": return DSH_LOCAL_INJECTED.has(event.data.source?.kind) ? "" : contentText(event.data.content);
++		case "assistant/message": return joinText(event.data.message.content.filter((block) => block.type !== "tool-call").flatMap(blockText));
++		case "tool/result": return joinText([event.data.error?.name ?? "", event.data.error?.code ?? ""]);
++	}
+ 	switch (event.type) {
+ 		case "user/message": return contentText(event.data.content);
+ 		case "assistant/message": return contentText(event.data.message.content);
+--- a/node_modules/@deepseek-ai/dsh-session-persistence-jsonl/lib/index.js
++++ b/node_modules/@deepseek-ai/dsh-session-persistence-jsonl/lib/index.js
+@@ -2329,6 +2329,10 @@
+ }
+ /** Build the stat-derived best-effort change token shared by full and lightweight reads. */
+ function fileRevision(identity) {
++	// dsh local: reinstalling or updating the app touches every file's ctime (and may renumber
++	// inodes), which made the history index read all conversations again. Size and mtime change
++	// with every append, so on the phone they alone tell whether a log changed.
++	if (process.platform === "ios") return SessionPersistenceRevision([identity.size, identity.mtimeNs].join(":"));
+ 	return SessionPersistenceRevision([
+ 		identity.dev,
+ 		identity.ino,
+@@ -3616,6 +3620,36 @@
+ 	}
+ };
+ /** JSONL persistence plugin label. */
++/**
++* dsh local: remember where each session directory was listed, by its encoded name. Without it every
++* open and read looked for the session in every project directory, and on the phone the container
++* path changes with each install, so 550 sessions sat in 330 project directories: about 2,000
++* file-system calls per session, nearly all of the history index's build time. A listing already
++* rejects duplicate ids and flat-file artifacts, so a session found where it was listed is final.
++*/
++{
++	const listSessionDirs = JsonlSessionPersistence.prototype.listSessionDirs;
++	JsonlSessionPersistence.prototype.listSessionDirs = async function(project, signal) {
++		const dirs = await listSessionDirs.call(this, project, signal);
++		this.dshLocalProjects ??= /* @__PURE__ */ new Map();
++		for (const dir of dirs) this.dshLocalProjects.set(basename(dir), project);
++		return dirs;
++	};
++	const findLog = JsonlSessionPersistence.prototype.findLog;
++	JsonlSessionPersistence.prototype.findLog = async function(id, signal) {
++		this.dshLocalProjects ??= /* @__PURE__ */ new Map();
++		const encoded = encodeSegment(id);
++		const known = this.dshLocalProjects.get(encoded);
++		if (known !== void 0 && this.dshLocalDeletion?.deleted(id) !== true) {
++			const selected = await this.resolveGenerationInDirectory(join(known, encoded), signal);
++			if (selected !== void 0) return selected;
++			this.dshLocalProjects.delete(encoded);
++		}
++		const found = await findLog.call(this, id, signal);
++		if (found !== void 0) this.dshLocalProjects.set(encoded, dirname(dirname(found.sourcePath)));
++		return found;
++	};
++}
+ const name = "session-persistence-jsonl";
+ /** Loader schema for the backend's root, physical encoding, and listing concurrency. */
+ const Config = z.object({

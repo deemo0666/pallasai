@@ -1,0 +1,30 @@
+--- a/node_modules/@deepseek-ai/node-addon-system/lib/flock.js
++++ b/node_modules/@deepseek-ai/node-addon-system/lib/flock.js
+@@ -7,6 +7,12 @@
+     if (binding)
+         return binding;
+     const { platform, arch } = process;
++    if (platform === 'ios') {
++        const nativeModule = { exports: {} };
++        process.dlopen(nativeModule, process.env.DSH_SYSTEM_FRAMEWORK);
++        binding = { tryLock: (fd, done) => done(nativeModule.exports.tryLock(fd)) };
++        return binding;
++    }
+     if (platform !== 'linux' && platform !== 'darwin') {
+         throw Object.assign(new Error(`flock is not supported on ${platform}-${arch}`), {
+             code: 'ERR_FLOCK_UNSUPPORTED_PLATFORM',
+--- a/node_modules/node-addon-require-builtin/lib/index.js
++++ b/node_modules/node-addon-require-builtin/lib/index.js
+@@ -8,7 +8,11 @@
+ exports.getBindingInfo = getBindingInfo;
+ const node_path_1 = __importDefault(require("node:path"));
+ const { createEntryApi } = require('node-addon-native-custom-loader');
+-const api = createEntryApi(node_path_1.default.resolve(__dirname, '..'));
++const api = process.platform === "ios" ? {
++    requireBuiltin: require,
++    isAllowedInternalId: id => typeof id === "string" && id.startsWith("internal/"),
++    getBindingInfo: () => ({ mode: "exposed-internals", backend: "ios" }),
++} : createEntryApi(node_path_1.default.resolve(__dirname, '..'));
+ function requireBuiltin(moduleId) {
+     return api.requireBuiltin(moduleId);
+ }

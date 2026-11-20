@@ -1,0 +1,15 @@
+--- a/node_modules/@deepseek-ai/dsh-deepseek-account-platform/lib/index.js
++++ b/node_modules/@deepseek-ai/dsh-deepseek-account-platform/lib/index.js
+@@ -806,6 +806,12 @@
+ 		const destination = new URL(url);
+ 		if (destination.origin !== this.inferenceOrigin || destination.username || destination.password) return void 0;
++		if (process.platform === "ios" && destination.origin === "https://api.deepseek.com" && this.origin === "https://platform.deepseek.com") {
++			const addon = { exports: {} };
++			process.dlopen(addon, process.env.DSH_SYSTEM_FRAMEWORK);
++			const token = addon.exports.accountToken();
++			if (token) return token;
++		}
+ 		const record = await this.ctx.credentials.readRecord(KEY);
+ 		if (record === void 0) return void 0;
+ 		if (record.kind !== "grant") throw new PlatformAuthError("storage");
+ 		const result = grant.safeParse(record.payload);

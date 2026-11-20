@@ -115,16 +115,44 @@ Pallas Agent 是基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepsee
 
 </details>
 
+## Pallas Core：自己编译
+
+本仓库包含 **Pallas Core** 的源代码，即 Pallas Agent 开源的部分，采用 Apache License 2.0。Core 本身是一个完整的 App：流式对话和思考过程、手机上的引擎（不含 Linux 虚拟机，所以没有 bash）、通过 `dsh web` 和 SSH 连接远程主机、自己的 API Key 和任意 OpenAI 兼容接口、ChatGPT 和 DeepSeek 登录、插件与技能、记忆、定时任务、日历/提醒事项/通讯录/邮件连接器、把任务交给已配对的电脑、分享与回放、小组件和快捷指令。
+
+TestFlight 版在 Core 之外还有：Linux 虚拟机（bash、Python、npm）、手机操控、AI 打电话、操作复盘、多端互联、内嵌 Tailscale 和 Claude 订阅登录。
+
+| | Pallas Core（本仓库源码） | Pallas Agent（TestFlight） |
+| --- | --- | --- |
+| 对话、模型、插件、技能、记忆 | ✓ | ✓ |
+| 手机上的引擎 | ✓ | ✓ |
+| 远程主机、把任务交给电脑 | ✓ | ✓ |
+| Linux 虚拟机（bash、Python、npm） | | ✓ |
+| 手机操控、AI 打电话、操作复盘 | | ✓ |
+| 多端互联、内嵌 Tailscale | | ✓ |
+
+**需要：** 装有 Xcode 27 的 Mac、[XcodeGen](https://github.com/yonaskolb/XcodeGen)；编译手机上的引擎还需要 Node.js、npm 和 Rust（`rustup target add aarch64-apple-ios`）。
+
+```sh
+xcodegen generate
+# 手机上的引擎（可选：没有它，App 只能连接远程主机）
+python3 Embedded/build.py
+open PallasCore.xcodeproj
+```
+
+在真机上运行前，把 `project.yml` 里的 `PALLAS_CORE_BUNDLE_ID` 和 `DEVELOPMENT_TEAM` 改成你自己的。iOS 模拟器里没有手机上的引擎。
+
+这里的源码在每次发版时从 App 的同一份代码导出，欢迎在这里提 Issue 和 Pull Request。
+
 ## 反馈
 
 欢迎在 [Issues](../../issues) 里提问题和建议。
 
 ## 版权与许可
 
-Copyright © 2026 deemo0666. All rights reserved.
+Copyright © 2026 deemo0666。
 
-本仓库用于发布说明和测试版入口，不包含 App 源代码。Pallas Agent 本身、名称和 logo、兔狲插画以及本仓库里的视频和图片均不提供开源许可，详见 [LICENSE](LICENSE)（英文为准）。
+本仓库的源代码采用 [Apache License 2.0](LICENSE)。「Pallas」「Pallas Agent」「Pallas Core」名称、App 图标和 logo、兔狲插画以及 `assets/` 里的视频和图片不在此许可范围内，详见 [NOTICE](NOTICE)，只能用来指称或链接本项目。你分发的版本需要换成自己的名称和图标。
 
-App 内置的 DeepSeek Harness、NodeMobile、QEMU、Linux 内核、Citadel、SwiftTerm 等第三方组件各自沿用其许可证，许可声明见 App 内「设置 › 关于」。内置 QEMU 和 Linux 客体系统的源代码发布在 [Pallas VM](https://github.com/deemo0666/pallas-vm)。
+第三方组件各自沿用其许可证：见 `App/ThirdPartyLicenses.txt` 和 App 内「设置 › 关于」。TestFlight 版里 QEMU 和 Linux 客体系统的源代码发布在 [Pallas VM](https://github.com/deemo0666/pallas-vm)。
 
 Pallas Agent 是独立项目，与 DeepSeek 无隶属关系。

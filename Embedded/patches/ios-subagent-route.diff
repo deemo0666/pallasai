@@ -1,0 +1,14 @@
+--- a/node_modules/@deepseek-ai/dsh-tool-subagent/lib/index.js	2026-11-12 14:03:32
++++ b/node_modules/@deepseek-ai/dsh-tool-subagent/lib/index.js	2026-11-12 14:03:32
+@@ -434,7 +434,10 @@
+ 				const routes = subagentModelSelectionPolicy(subagentModelSelectionProjectionHandle, parent.session);
+ 				const modelSelectionPolicy = routes === void 0 ? void 0 : { routes };
+ 				const agentPreset = presets.resolve(args);
+-				const modelRequest = args;
++				// dsh local: models fill provider/model/reasoning_effort with blanks or guesses; without a recorded policy only the parent route is allowed, so drop them and inherit.
++				const modelRequest = { ...args };
++				for (const field of ["provider", "model", "reasoning_effort"]) if (modelSelectionPolicy === void 0 || typeof modelRequest[field] !== "string" || modelRequest[field].trim() === "") delete modelRequest[field];
++				if (modelRequest.provider === void 0 || modelRequest.model === void 0) { delete modelRequest.provider; delete modelRequest.model; }
+ 				const parentOptions = parentAgentOptionsForDelegation(parent);
+ 				const requiresRoutePreflight = hasDelegationModelRequest(modelRequest) || hasConfiguredLlmSelection(config.agentOptions);
+ 				const requestedChildAgentOptions = requestedAgentOptions(parentOptions, requiresRoutePreflight && providerRouteDefaults !== void 0 ? {

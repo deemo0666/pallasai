@@ -1,0 +1,58 @@
+--- a/node_modules/@npmcli/arborist/lib/node.js
++++ b/node_modules/@npmcli/arborist/lib/node.js
+@@ -46,7 +46,6 @@
+ const debug = require('./debug.js')
+ const gatherDepSet = require('./gather-dep-set.js')
+ const printableTree = require('./printable.js')
+-const querySelectorAll = require('./query-selector-all.js')
+ const relpath = require('./relpath.js')
+ const treeCheck = require('./tree-check.js')
+ 
+@@ -1601,6 +1600,7 @@
+   // maybe accept both string value or array of strings
+   // seems to be what dom API does
+   querySelectorAll (query, opts) {
++    const querySelectorAll = require('./query-selector-all.js')
+     return querySelectorAll(this, query, opts)
+   }
+ 
+--- a/node_modules/npm-registry-fetch/lib/index.js
++++ b/node_modules/npm-registry-fetch/lib/index.js
+@@ -1,9 +1,7 @@
+ 'use strict'
+ 
+ const { HttpErrorAuthOTP } = require('./errors.js')
+-const checkResponse = require('./check-response.js')
+ const getAuth = require('./auth.js')
+-const fetch = require('make-fetch-happen')
+ const JSONStream = require('./json-stream')
+ const npa = require('npm-package-arg')
+ const qs = require('querystring')
+@@ -105,6 +103,8 @@
+   }
+ 
+   const doFetch = async fetchBody => {
++    const fetch = require('make-fetch-happen')
++    const checkResponse = require('./check-response.js')
+     const p = fetch(uri, {
+       agent: opts.agent,
+       algorithms: opts.algorithms,
+--- a/node_modules/pacote/lib/registry.js
++++ b/node_modules/pacote/lib/registry.js
+@@ -3,7 +3,6 @@
+ const pickManifest = require('npm-pick-manifest')
+ const ssri = require('ssri')
+ const npa = require('npm-package-arg')
+-const sigstore = require('sigstore')
+ const fetch = require('npm-registry-fetch')
+ const Fetcher = require('./fetcher.js')
+ const RemoteFetcher = require('./remote.js')
+@@ -327,7 +326,7 @@
+                 tufForceCache: true,
+                 keySelector: publicKey ? () => publicKey.pemkey : undefined,
+               }
+-              await sigstore.verify(bundle, options)
++              await require('sigstore').verify(bundle, options)
+             } catch (e) {
+               throw Object.assign(new Error(
+                 `${mani._id} failed to verify attestation: ${e.message}`

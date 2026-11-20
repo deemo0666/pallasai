@@ -1,0 +1,629 @@
+{
+  "sourceLanguage" : "zh-Hans",
+  "strings" : {
+    "${applicationName}停止操控电脑" : {
+      "localizations" : {
+        "de" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "${applicationName} soll meinen Computer nicht mehr steuern",
+              "${applicationName} stoppen",
+              "Stopp ${applicationName}"
+            ]
+          }
+        },
+        "en" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Stop ${applicationName} using my computer",
+              "Tell ${applicationName} to stop",
+              "Stop ${applicationName}"
+            ]
+          }
+        },
+        "es" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Haz que ${applicationName} deje de usar mi ordenador",
+              "Detener ${applicationName}",
+              "Dile a ${applicationName} que pare"
+            ]
+          }
+        },
+        "fr" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Empêcher ${applicationName} d’utiliser mon ordinateur",
+              "Arrêter ${applicationName}",
+              "Dire à ${applicationName} de s’arrêter"
+            ]
+          }
+        },
+        "it" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Fai smettere ${applicationName} di usare il mio computer",
+              "Ferma ${applicationName}",
+              "Di' a ${applicationName} di fermarsi"
+            ]
+          }
+        },
+        "ja" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "${applicationName}のパソコン操作を止めて",
+              "${applicationName}を止めて",
+              "${applicationName}に停止するよう伝えて"
+            ]
+          }
+        },
+        "ko" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "${applicationName}가 컴퓨터 조작을 멈추게 해줘",
+              "${applicationName} 멈춰줘",
+              "${applicationName}에게 멈추라고 해줘"
+            ]
+          }
+        },
+        "pt-BR" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Fazer o ${applicationName} parar de usar meu computador",
+              "Parar o ${applicationName}",
+              "Mandar o ${applicationName} parar"
+            ]
+          }
+        },
+        "ru" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Пусть ${applicationName} перестанет управлять моим компьютером",
+              "Останови ${applicationName}",
+              "Скажи ${applicationName} остановиться"
+            ]
+          }
+        },
+        "zh-Hant" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "${applicationName}停止操控電腦",
+              "讓${applicationName}停下",
+              "叫${applicationName}停止"
+            ]
+          }
+        }
+      }
+    },
+    "${applicationName}办得怎么样了" : {
+      "localizations" : {
+        "de" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Wie läuft es bei ${applicationName}",
+              "Was hat ${applicationName} gefunden",
+              "Zeig mir das neueste Ergebnis von ${applicationName}"
+            ]
+          }
+        },
+        "en" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "What did ${applicationName} find",
+              "Get my latest ${applicationName} result",
+              "How's ${applicationName} doing"
+            ]
+          }
+        },
+        "es" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "¿Qué encontró ${applicationName}?",
+              "Dame mi último resultado de ${applicationName}",
+              "¿Cómo va ${applicationName}?"
+            ]
+          }
+        },
+        "fr" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Qu’a trouvé ${applicationName}",
+              "Obtenir mon dernier résultat ${applicationName}",
+              "Où en est ${applicationName}"
+            ]
+          }
+        },
+        "it" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Come sta andando ${applicationName}",
+              "Mostra l'ultimo risultato di ${applicationName}",
+              "A che punto è ${applicationName}"
+            ]
+          }
+        },
+        "ja" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "${applicationName}の結果は？",
+              "${applicationName}の最新の結果を教えて",
+              "${applicationName}はどうなった？"
+            ]
+          }
+        },
+        "ko" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "${applicationName} 어떻게 됐어",
+              "${applicationName} 최근 결과 알려줘",
+              "${applicationName} 진행 상황 알려줘"
+            ]
+          }
+        },
+        "pt-BR" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "O que o ${applicationName} encontrou",
+              "Ver meu último resultado do ${applicationName}",
+              "Como está o ${applicationName}"
+            ]
+          }
+        },
+        "ru" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Что сделал ${applicationName}",
+              "Покажи последний результат ${applicationName}",
+              "Как дела у ${applicationName}"
+            ]
+          }
+        },
+        "zh-Hant" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "${applicationName}辦得怎麼樣了",
+              "取得我最新的${applicationName}結果",
+              "${applicationName}進度如何"
+            ]
+          }
+        }
+      }
+    },
+    "${applicationName}新对话" : {
+      "localizations" : {
+        "de" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Neuer Chat in ${applicationName}",
+              "Starte einen neuen Chat in ${applicationName}",
+              "${applicationName} Chat starten"
+            ]
+          }
+        },
+        "en" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "New ${applicationName} chat",
+              "Start a new chat in ${applicationName}",
+              "Start a ${applicationName} chat"
+            ]
+          }
+        },
+        "es" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Nueva conversación en ${applicationName}",
+              "Iniciar una conversación nueva en ${applicationName}",
+              "Empezar un chat en ${applicationName}"
+            ]
+          }
+        },
+        "fr" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Nouvelle conversation ${applicationName}",
+              "Démarrer une nouvelle conversation dans ${applicationName}",
+              "Lancer une conversation ${applicationName}"
+            ]
+          }
+        },
+        "it" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Nuova chat in ${applicationName}",
+              "Inizia una nuova chat in ${applicationName}",
+              "Avvia una chat con ${applicationName}"
+            ]
+          }
+        },
+        "ja" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "${applicationName}で新しいチャット",
+              "${applicationName}で新しいチャットを始めて",
+              "${applicationName}のチャットを始める"
+            ]
+          }
+        },
+        "ko" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "${applicationName} 새 대화",
+              "${applicationName}에서 새 대화 시작해줘",
+              "${applicationName} 대화 시작"
+            ]
+          }
+        },
+        "pt-BR" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Nova conversa no ${applicationName}",
+              "Iniciar uma nova conversa no ${applicationName}",
+              "Começar uma conversa no ${applicationName}"
+            ]
+          }
+        },
+        "ru" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Новый чат в ${applicationName}",
+              "Начни новый чат в ${applicationName}",
+              "Открой новый чат ${applicationName}"
+            ]
+          }
+        },
+        "zh-Hant" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "${applicationName}新對話",
+              "在${applicationName}開啟新對話",
+              "開始${applicationName}對話"
+            ]
+          }
+        }
+      }
+    },
+    "打开${applicationName}里的${target}" : {
+      "localizations" : {
+        "de" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Öffne ${target} in ${applicationName}",
+              "Zeige ${target} in ${applicationName}"
+            ]
+          }
+        },
+        "en" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Open ${target} in ${applicationName}",
+              "Show ${target} in ${applicationName}"
+            ]
+          }
+        },
+        "es" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Abrir ${target} en ${applicationName}",
+              "Mostrar ${target} en ${applicationName}"
+            ]
+          }
+        },
+        "fr" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Ouvrir ${target} dans ${applicationName}",
+              "Afficher ${target} dans ${applicationName}"
+            ]
+          }
+        },
+        "it" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Apri ${target} in ${applicationName}",
+              "Mostra ${target} in ${applicationName}"
+            ]
+          }
+        },
+        "ja" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "${applicationName}の${target}を開いて",
+              "${applicationName}で${target}を表示"
+            ]
+          }
+        },
+        "ko" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "${applicationName}에서 ${target} 열어줘",
+              "${applicationName}의 ${target} 보여줘"
+            ]
+          }
+        },
+        "pt-BR" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Abrir ${target} no ${applicationName}",
+              "Mostrar ${target} no ${applicationName}"
+            ]
+          }
+        },
+        "ru" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Открой ${target} в ${applicationName}",
+              "Покажи ${target} в ${applicationName}"
+            ]
+          }
+        },
+        "zh-Hant" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "開啟${applicationName}裡的${target}",
+              "在${applicationName}顯示${target}"
+            ]
+          }
+        }
+      }
+    },
+    "让${applicationName}停下" : {
+      "localizations" : {
+        "de" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "${applicationName} stoppen",
+              "Sag ${applicationName}, es soll aufhören",
+              "Stopp ${applicationName}"
+            ]
+          }
+        },
+        "en" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Stop ${applicationName}",
+              "Tell ${applicationName} to stop",
+              "Make ${applicationName} stop using my phone"
+            ]
+          }
+        },
+        "es" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Detener ${applicationName}",
+              "Dile a ${applicationName} que pare",
+              "Haz que ${applicationName} deje de usar mi teléfono"
+            ]
+          }
+        },
+        "fr" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Arrêter ${applicationName}",
+              "Dire à ${applicationName} de s’arrêter",
+              "Empêcher ${applicationName} d’utiliser mon téléphone"
+            ]
+          }
+        },
+        "it" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Ferma ${applicationName}",
+              "Di' a ${applicationName} di fermarsi",
+              "Fai fermare ${applicationName}"
+            ]
+          }
+        },
+        "ja" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "${applicationName}を止めて",
+              "${applicationName}に停止するよう伝えて",
+              "${applicationName}のスマホ操作を止めて"
+            ]
+          }
+        },
+        "ko" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "${applicationName} 멈춰줘",
+              "${applicationName}에게 멈추라고 해줘",
+              "${applicationName}가 내 휴대폰 쓰는 거 멈춰줘"
+            ]
+          }
+        },
+        "pt-BR" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Parar o ${applicationName}",
+              "Mandar o ${applicationName} parar",
+              "Fazer o ${applicationName} parar de usar meu celular"
+            ]
+          }
+        },
+        "ru" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Останови ${applicationName}",
+              "Скажи ${applicationName} остановиться",
+              "Пусть ${applicationName} перестанет управлять моим телефоном"
+            ]
+          }
+        },
+        "zh-Hant" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "讓${applicationName}停下",
+              "叫${applicationName}停止",
+              "讓${applicationName}停止操控我的手機"
+            ]
+          }
+        }
+      }
+    },
+    "让${applicationName}办件事" : {
+      "localizations" : {
+        "de" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Frag ${applicationName}",
+              "Bitte ${applicationName} um Hilfe",
+              "Lass ${applicationName} etwas erledigen"
+            ]
+          }
+        },
+        "en" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Ask ${applicationName}",
+              "Ask ${applicationName} for help",
+              "Have ${applicationName} take care of something",
+              "Get ${applicationName} on it",
+              "Use ${applicationName} to get something done",
+              "Have ${applicationName} do something for me",
+              "${applicationName}, help me get something done"
+            ]
+          }
+        },
+        "es" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Preguntar a ${applicationName}",
+              "Pedir ayuda a ${applicationName}",
+              "Que ${applicationName} se encargue de algo"
+            ]
+          }
+        },
+        "fr" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Demander à ${applicationName}",
+              "Demander de l’aide à ${applicationName}",
+              "Faire faire quelque chose par ${applicationName}",
+              "Utiliser ${applicationName} pour faire quelque chose"
+            ]
+          }
+        },
+        "it" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Chiedi a ${applicationName}",
+              "Chiedi aiuto a ${applicationName}",
+              "Fai fare una cosa a ${applicationName}",
+              "Usa ${applicationName} per fare una cosa"
+            ]
+          }
+        },
+        "ja" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "${applicationName}に頼む",
+              "${applicationName}に手伝ってもらう",
+              "${applicationName}に用事を頼んで",
+              "${applicationName}で用事を済ませて"
+            ]
+          }
+        },
+        "ko" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "${applicationName}에게 부탁해줘",
+              "${applicationName}에게 도움 요청해줘",
+              "${applicationName}에게 일 하나 맡겨줘"
+            ]
+          }
+        },
+        "pt-BR" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Pedir ao ${applicationName}",
+              "Pedir ajuda ao ${applicationName}",
+              "Pedir ao ${applicationName} para resolver uma coisa"
+            ]
+          }
+        },
+        "ru" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "Спроси ${applicationName}",
+              "Попроси ${applicationName} помочь",
+              "Поручи ${applicationName} одно дело",
+              "${applicationName}, помоги мне с делом"
+            ]
+          }
+        },
+        "zh-Hant" : {
+          "stringSet" : {
+            "state" : "translated",
+            "values" : [
+              "問${applicationName}",
+              "請${applicationName}幫忙",
+              "讓${applicationName}幫我辦件事",
+              "請${applicationName}處理一件事"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

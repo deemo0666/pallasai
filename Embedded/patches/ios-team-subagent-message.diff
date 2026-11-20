@@ -1,0 +1,50 @@
+--- a/node_modules/@deepseek-ai/dsh-experimental-tool-agent-team/lib/index.js	2026-11-13 17:17:20
++++ b/node_modules/@deepseek-ai/dsh-experimental-tool-agent-team/lib/index.js	2026-11-13 17:17:32
+@@ -291,12 +291,12 @@
+ 		})));
+ 		register(scoped.tools.register(defineTool({
+ 			name: "send_message",
+-			description: "Send one message to another Team member. A running target receives it at the nearest step boundary; an inactive target starts or resumes a turn.",
++			description: "Send one message to another Team member, or to a subagent you started with the subagent tool. A running target receives it at the nearest step boundary; an inactive target starts or resumes a turn.",
+ 			parameters: {
+ 				target: {
+ 					type: "string",
+ 					required: true,
+-					description: "Member target returned by spawn_teammate or list_agents, including lead."
++					description: "Member target returned by spawn_teammate or list_agents, including lead; or the agent id the subagent tool returned."
+ 				},
+ 				message: {
+ 					type: "string",
+@@ -306,14 +306,24 @@
+ 			},
+ 			output: jsonOutput(SEND_VALUE_SCHEMA),
+ 			async execute(args, exec) {
+-				await ctx.agentTeams.sendMessage(callingAgent(exec.agent, "send_message"), {
+-					target: args.target,
+-					content: [{
+-						type: "text",
+-						text: args.message
+-					}],
+-					signal: exec.signal
+-				});
++				const sender = callingAgent(exec.agent, "send_message");
++				const content = [{
++					type: "text",
++					text: args.message
++				}];
++				try {
++					await ctx.agentTeams.sendMessage(sender, {
++						target: args.target,
++						content,
++						signal: exec.signal
++					});
++				} catch (error) {
++					// iOS: this tool shadows the subagent service's send_message, so a plain subagent (not a
++					// teammate) is reached through that service instead of failing TEAM_MEMBER_NOT_FOUND.
++					const subagents = ctx.get("subagents");
++					if (error?.code !== "TEAM_MEMBER_NOT_FOUND" || !subagents) throw error;
++					await subagents.sendMessage(sender, args.target, content, { signal: exec.signal });
++				}
+ 				return { sent: true };
+ 			}
+ 		})));

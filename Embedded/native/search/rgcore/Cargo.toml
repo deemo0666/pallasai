@@ -1,0 +1,26 @@
+[package]
+# ripgrep 15.0.0's crates/core (the rg program), made a library that runs inside the app for
+# commands typed in the Linux guest. The version is the guest's rg, which this must match.
+name = "rgcore"
+version = "15.0.0"
+edition = "2024"
+license = "Unlicense OR MIT"
+publish = false
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+anyhow = "1.0.75"
+bstr = "1.7.0"
+grep = "0.4.0"
+ignore = "0.4.24"
+lexopt = "0.3.0"
+log = "0.4.5"
+serde_json = "1.0.23"
+termcolor = "1.1.0"
+textwrap = { version = "0.16.0", default-features = false }
+
+[features]
+# Not built: the guest's rg has PCRE2, and -P is declined, so it runs there.
+pcre2 = []

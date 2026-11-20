@@ -1,0 +1,81 @@
+name: PallasCore
+options:
+  developmentLanguage: zh-Hans
+  deploymentTarget:
+    iOS: "18.0"
+settings:
+  # Change to your own identifier (and the App Group in the entitlements follows it).
+  PALLAS_CORE_BUNDLE_ID: com.example.pallas-core
+  DEVELOPMENT_TEAM: ""
+  # Point these at a file without the App Group to try a build before registering one.
+  PALLAS_APP_ENTITLEMENTS: App/PallasCore.entitlements
+  PALLAS_WIDGET_ENTITLEMENTS: Widgets/PallasWidgets.entitlements
+  # Optional: OAuth client IDs for the Gmail and Outlook connectors.
+  PALLAS_GOOGLE_CLIENT_ID: ""
+  PALLAS_MICROSOFT_CLIENT_ID: ""
+packages:
+  SwiftTerm:
+    url: https://github.com/migueldeicaza/SwiftTerm
+    exactVersion: 1.5.0
+  Citadel:
+    url: https://github.com/orlandos-nl/Citadel
+    exactVersion: 0.12.1
+targets:
+  PallasCore:
+    type: application
+    platform: iOS
+    sources: [App, Shared]
+    postBuildScripts:
+      - name: Embed device engine
+        script: sh "$PROJECT_DIR/Embedded/embed.sh"
+        basedOnDependencyAnalysis: false
+    dependencies:
+      - package: Citadel
+      - package: SwiftTerm
+      - target: PallasCoreWidgets
+    settings:
+      ENABLE_USER_SCRIPT_SANDBOXING: NO
+      CODE_SIGN_ENTITLEMENTS: $(PALLAS_APP_ENTITLEMENTS)
+      INFOPLIST_KEY_NSSupportsLiveActivities: YES
+      PRODUCT_BUNDLE_IDENTIFIER: $(PALLAS_CORE_BUNDLE_ID)
+      MARKETING_VERSION: "0.5.1"
+      CURRENT_PROJECT_VERSION: "1"
+      INFOPLIST_KEY_CFBundleDisplayName: "Pallas Core"
+      SWIFT_VERSION: "5.0"
+      SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) PALLAS_CORE
+      SWIFT_EMIT_LOC_STRINGS: YES
+      LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+      GENERATE_INFOPLIST_FILE: YES
+      INFOPLIST_FILE: App/Info.plist
+      ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+      INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+      OTHER_LDFLAGS: -weak_framework FoundationModels -weak_framework ContactsUI
+  PallasCoreWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - Widgets
+      - Shared
+      - path: App/Localizable.xcstrings
+        buildPhase: resources
+    info:
+      path: Widgets/Info.plist
+      properties:
+        CFBundleDisplayName: Pallas Core
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: $(PALLAS_CORE_BUNDLE_ID).widgets
+      CODE_SIGN_ENTITLEMENTS: $(PALLAS_WIDGET_ENTITLEMENTS)
+      MARKETING_VERSION: "0.5.1"
+      CURRENT_PROJECT_VERSION: "1"
+      SWIFT_VERSION: "5.0"
+      SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) PALLAS_CORE
+      SWIFT_EMIT_LOC_STRINGS: YES
+      LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+      GENERATE_INFOPLIST_FILE: YES
+schemes:
+  PallasCore:
+    build:
+      targets:
+        PallasCore: all

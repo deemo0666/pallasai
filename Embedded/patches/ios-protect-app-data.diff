@@ -1,0 +1,17 @@
+--- a/node_modules/@deepseek-ai/dsh-fs-sandbox/lib/index.js	2026-11-13 17:45:37
++++ b/node_modules/@deepseek-ai/dsh-fs-sandbox/lib/index.js	2026-11-13 17:45:54
+@@ -176,6 +176,14 @@
+ 	async checkedTarget(target, sandboxPolicy) {
+ 		const policy = sandboxPolicy ?? this.ctx.sandboxPolicy.resolve();
+ 		const { mode } = policy;
++		// iOS: the app's own settings, credentials and sessions are never a tool's to change.
++		try {
++			const guard = globalThis[Symbol.for("dsh.local.workspace")]?.guardWrite;
++			guard?.(target.displayPath);
++			if (target.targetKey !== void 0) guard?.(String(target.targetKey));
++		} catch (error) {
++			throw new FsError(error.message, "FS_SANDBOX_DENIED");
++		}
+ 		if (mode === "danger-full-access") return target;
+ 		if (mode === "read-only") throw new FsError(`cannot write "${target.displayPath}": file access denied under read-only mode`, "FS_SANDBOX_DENIED");
+ 		const fresh = await this.resolve(target.displayPath);

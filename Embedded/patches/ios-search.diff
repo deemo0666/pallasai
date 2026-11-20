@@ -1,0 +1,29 @@
+--- a/node_modules/@deepseek-ai/dsh-tool-fs-search/lib/index.js
++++ b/node_modules/@deepseek-ai/dsh-tool-fs-search/lib/index.js
+@@ -36,7 +36,7 @@
+ * config), attached to both tool definitions for
+ * `@deepseek-ai/dsh-tool-call-timeout-policy` to enforce through `exec.signal`.
+ */
+-const SEARCH_TIMEOUT_MS = 3e4;
++const SEARCH_TIMEOUT_MS = process.platform === "ios" ? 9e4 : 3e4; // a search of the guest's own files may be what starts the guest
+ /**
+ * Default cap in bytes on the retained stderr tail of one search run — a
+ * diagnostic excerpt only (the tool never reads a stderr spill path, and the
+@@ -168,7 +168,16 @@
+ 	const workdir = exec.agent === void 0 ? process.cwd() : await ctx.workingDirectory.ensure(exec.agent, exec.signal);
+ 	let handle;
+ 	try {
+-		handle = ctx.subprocess.spawn({
++		// iOS cannot start programs: ripgrep's libraries run in the app, or ripgrep in the Linux guest for the guest's own files.
++		if (process.platform === "ios") handle = (await import(process.env.DSH_IOS_SHELL_MODULE)).ripgrep({
++			argv: ["--no-config", ...argv],
++			cwd: workdir,
++			stdoutMaxBytes: rawOutputMaxBytes,
++			stderrMaxBytes,
++			graceMs,
++			signal: exec.signal
++		});
++		else handle = ctx.subprocess.spawn({
+ 			argv: [
+ 				await resolveRgPath(),
+ 				"--no-config",

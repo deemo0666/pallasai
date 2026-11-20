@@ -1,0 +1,31 @@
+--- a/node_modules/@deepseek-ai/dsh-llm-pi-ai/lib/index.js	2026-11-13 17:28:55
++++ b/node_modules/@deepseek-ai/dsh-llm-pi-ai/lib/index.js	2026-11-13 17:28:55
+@@ -2031,9 +2031,27 @@
+ 					headers: requestHeaders(profile.headers, options, model.baseUrl, this.config.prepareHeaders)
+ 				}), model.contextWindow, options.signal, model.id)[Symbol.asyncIterator]();
+ 				let exhausted = false;
++				// iOS: a request that gets no event at all usually sits on a dead connection (seen after the
++				// app was suspended) and only fails one to two minutes later. Healthy replies start within
++				// seconds, so give up on the first event after 45 s and let the retry policy try again.
++				let awaitingFirst = true;
+ 				try {
+ 					while (true) {
+-						const result = await watchdog.next(iterator);
++						let result;
++						if (awaitingFirst) {
++							const pending = watchdog.next(iterator);
++							pending.catch(() => {});
++							let timer;
++							const late = new Promise((_, reject) => {
++								timer = setTimeout(() => reject(new LlmError("pi-ai no response within 45 s", "TIMEOUT")), 45e3);
++							});
++							try {
++								result = await Promise.race([pending, late]);
++							} finally {
++								clearTimeout(timer);
++							}
++							awaitingFirst = false;
++						} else result = await watchdog.next(iterator);
+ 						if (result.done) {
+ 							exhausted = true;
+ 							return;

@@ -1,0 +1,88 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- Everything comes from the app bundle: no network at all. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' file: 'unsafe-inline' 'unsafe-eval'; style-src 'self' file: 'unsafe-inline'; font-src 'self' file: data:; img-src 'self' file: data:">
+<!-- No device-width: the page is laid out at the web view's own width, unzoomed, so snapshots are 1:1. -->
+<meta name="viewport" content="initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no">
+<link rel="stylesheet" href="katex.min.css">
+<style>
+html, body { margin: 0; padding: 0; background: transparent; -webkit-text-size-adjust: none; }
+#stage { position: absolute; left: 0; top: 0; display: inline-block; white-space: nowrap; line-height: 1.2; }
+#stage .katex-display { margin: 0; display: inline-block; text-align: left; }
+#stage .katex-display > .katex { display: inline-block; white-space: nowrap; }
+#stage svg { max-width: none !important; display: block; }
+#base { display: inline-block; width: 0; height: 0; }
+</style>
+<script src="katex.min.js"></script>
+<script src="mermaid.min.js"></script>
+</head>
+<body><div id="stage"></div>
+<script>
+let serial = 0;
+// KaTeX's fonts load lazily: measured before they arrive, a formula comes out too narrow and is then
+// exported cut off. Ask for every face up front, and settle layout and fonts again before measuring.
+const fontsLoaded = Promise.all(['KaTeX_Main', 'KaTeX_Math', 'KaTeX_AMS', 'KaTeX_Size1', 'KaTeX_Size2', 'KaTeX_Size3', 'KaTeX_Size4',
+  'KaTeX_Caligraphic', 'KaTeX_Fraktur', 'KaTeX_SansSerif', 'KaTeX_Script', 'KaTeX_Typewriter']
+  .flatMap((family) => ['16px ' + family, 'bold 16px ' + family, 'italic 16px ' + family].map((font) => document.fonts.load(font).catch(() => null))));
+async function settle() {
+  await fontsLoaded;
+  void document.getElementById('stage').offsetWidth;
+  await document.fonts.ready;
+  await new Promise((resolve) => {
+    // Offscreen views can pause animation frames even after fonts and layout are ready.
+    const timer = setTimeout(resolve, 100);
+    requestAnimationFrame(() => requestAnimationFrame(() => { clearTimeout(timer); resolve(); }));
+  });
+}
+function clean() {
+  // Mermaid may leave its scratch elements behind after a failure.
+  document.querySelectorAll('body > :not(#stage):not(script)').forEach((node) => node.remove());
+}
+window.draw = async function (job) {
+  const stage = document.getElementById('stage');
+  stage.innerHTML = '';
+  stage.style.color = job.color;
+  stage.style.fontSize = job.size + 'px';
+  stage.style.padding = (job.kind === 'mermaid' ? 2 : 1) + 'px';
+  try {
+    if (job.kind === 'mermaid') {
+      mermaid.initialize({
+        startOnLoad: false, securityLevel: 'strict', suppressErrorRendering: true,
+        theme: job.dark ? 'dark' : 'default', fontFamily: '-apple-system, "PingFang SC", sans-serif',
+        flowchart: { useMaxWidth: false, htmlLabels: false }, sequence: { useMaxWidth: false },
+        gantt: { useMaxWidth: false }, class: { useMaxWidth: false }, state: { useMaxWidth: false },
+        er: { useMaxWidth: false }, journey: { useMaxWidth: false }, pie: { useMaxWidth: false },
+        mindmap: { useMaxWidth: false }, timeline: { useMaxWidth: false }, gitGraph: { useMaxWidth: false }
+      });
+      await mermaid.parse(job.source);
+      const out = await mermaid.render('chart' + (++serial), job.source);
+      clean();
+      stage.innerHTML = out.svg;
+      const svg = stage.querySelector('svg');
+      if (!svg) throw new Error('no chart');
+      svg.removeAttribute('style');
+      const box = svg.viewBox && svg.viewBox.baseVal;
+      if (box && box.width > 0 && box.height > 0) {
+        svg.setAttribute('width', box.width); svg.setAttribute('height', box.height);
+      }
+    } else {
+      const holder = document.createElement('span');
+      const base = document.createElement('span');
+      base.id = 'base';
+      stage.appendChild(base);
+      stage.appendChild(holder);
+      katex.render(job.source, holder, { displayMode: job.kind === 'display', throwOnError: true, strict: 'ignore', trust: false, output: 'html' });
+    }
+    await settle();
+    const rect = stage.getBoundingClientRect();
+    const base = document.getElementById('base');
+    const baseline = base ? base.getBoundingClientRect().bottom - rect.top : rect.height;
+    return { ok: true, width: Math.ceil(Math.max(rect.width, stage.scrollWidth)), height: Math.ceil(Math.max(rect.height, stage.scrollHeight)), baseline: baseline };
+  } catch (error) {
+    clean();
+    stage.innerHTML = '';
+    return { ok: false, error: String((error && error.message) || error).slice(0, 300) };
+  }
+};
+</script>
+</body></html>
