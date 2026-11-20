@@ -1,0 +1,15 @@
+Pallas Agent
+Copyright (c) 2026 deemo0666. All rights reserved.
+
+No license is granted. This repository contains release notes, images and videos for
+Pallas Agent; it does not contain the app's source code. Except where the law allows
+otherwise, you may not copy, modify or redistribute any of its contents without written
+permission from the copyright holder. You may link to this repository and quote short
+passages to refer to the project.
+
+The names "Pallas", "Pallas Agent" and "Pallas VM", the logo and the Pallas cat artwork
+are not licensed. You may use them only to refer or link to this project.
+
+Third-party components bundled in the app keep their own licenses; their notices ship
+in the app under Settings > About. Source for the bundled QEMU and Linux guest is at
+https://github.com/deemo0666/pallas-vm.
